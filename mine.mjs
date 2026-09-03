@@ -4,6 +4,7 @@
 //   node dcgall/mine.mjs --min 4 --n 60     최소 등장 글 수 / 출력 개수
 //   node dcgall/mine.mjs --promote 야호호 --type meta --gloss "NSFW 상황" --concept -
 //   node dcgall/mine.mjs --reject 그리고
+//   node dcgall/mine.mjs --keep-names       캐릭터 이름 자동 기각을 끈다
 //   node dcgall/mine.mjs --brief            GLOSSARY.md (문맥 브리핑) 재생성
 //
 // 기각한 말은 stopwords 로 남아 다시는 후보에 오르지 않는다. 쓸수록 정확해지는 구조.
@@ -90,14 +91,20 @@ if (flag('brief')) {
 }
 
 /* ── 채굴 ──────────────────────────────────────────────────── */
-const { ranked, added, posts: nPosts } = mine(ROOT, galleryId, glos, { min: Number(flag('min') || 2) });
+const { ranked, added, rejected, posts: nPosts } = mine(ROOT, galleryId, glos,
+  { min: Number(flag('min') || 2), keepNames: !!flag('keep-names') });
 const MIN = Number(flag('min') || 2);
 
 glos.save();
 
 const pending = Object.entries(glos.data.candidates).filter(([, v]) => v.status !== 'rejected');
 console.log(`\n글 ${nPosts}건에서 채굴 · 신규 후보 ${added}개 · 미확인 누적 ${pending.length}개`);
-console.log(`확정 용어 ${Object.keys(glos.data.terms).length}개 · 기각어 ${glos.data.stopwords.length}개\n`);
+console.log(`확정 용어 ${Object.keys(glos.data.terms).length}개 · 기각어 ${glos.data.stopwords.length}개`);
+if (rejected.length) {
+  console.log(`캐릭터 이름으로 보고 자동 기각 ${rejected.length}개: ${rejected.join(', ')}`);
+  console.log(`  틀렸으면 --promote 로 되살리거나, 아예 끄려면 --keep-names`);
+}
+console.log('');
 
 const N = Number(flag('n') || 30);
 console.log(`  ${'후보'.padEnd(13)} 점수 제목 태그  추정        예시 / 같이 나온 사전어`);

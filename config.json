@@ -120,8 +120,8 @@
   },
   "report": {
     "title": "AI채팅 갤러리 수집 리포트",
-    "recentDays": 14,
-    "topN": 300,
+    "recentDays": 0,
+    "topN": 0,
     "requireBody": true
   }
 }

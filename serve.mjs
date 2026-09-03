@@ -81,20 +81,25 @@ const json = (res, code, obj) => {
 const C = { running: false, job: null, phase: null, done: 0, total: 0, label: '',
             startedAt: null, stop: false, result: null, logs: [] };
 
-async function startCrawl(job) {
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+async function startCrawl(job, range = {}) {
   if (C.running) return { error: '이미 수집이 진행 중이에요.' };
   if (!cfg.jobs[job]) return { error: `알 수 없는 job 이에요: ${job}` };
-  Object.assign(C, { running: true, job, phase: 'list', done: 0, total: 0, label: '준비 중',
+  const since = range.since && DATE_RE.test(range.since) ? range.since : null;
+  const until = range.until && DATE_RE.test(range.until) ? range.until : null;
+  if (since && until && since > until) return { error: '시작일이 종료일보다 뒤예요.' };
+  Object.assign(C, { running: true, job, since, until, phase: 'list', done: 0, total: 0, label: '준비 중',
                      startedAt: new Date().toISOString(), stop: false, result: null, logs: [] });
-  console.log(`  수집 시작: ${job}`);
-  runCrawl(ROOT, cfg, { job, gallery: galleryId, source: 'viewer', glossary: new Glossary(ROOT) },
+  console.log(`  수집 시작: ${job}${since || until ? ` · 기간 ${since || '처음'}~${until || '지금'}` : ''}`);
+  runCrawl(ROOT, cfg, { job, since, until, gallery: galleryId, source: 'viewer', glossary: new Glossary(ROOT) },
     (st) => { C.phase = st.phase; C.done = st.done; C.total = st.total; C.label = st.label; },
     () => C.stop)
     .then((r) => {
-      C.result = { runId: r.manifest.run_id, seen: r.records, added: r.newCount,
+      C.result = { runId: r.manifest.run_id, seen: r.records, added: r.newCount, skipped: r.skipped,
                    details: r.detailDone, errors: r.errors.length, stopped: C.stop };
       C.logs = r.logs.slice(-40);
-      console.log(`  수집 완료: ${job} · 수집 ${r.records} (신규 ${r.newCount}) · 본문 ${r.detailDone} · 에러 ${r.errors.length}`);
+      console.log(`  수집 완료: ${job} · 수집 ${r.records} (신규 ${r.newCount}${r.skipped ? ` · 중복 건너뜀 ${r.skipped}` : ''}) · 본문 ${r.detailDone} · 에러 ${r.errors.length}`);
     })
     .catch((e) => { C.result = { error: e.message }; console.error('  수집 실패:', e.message); })
     .finally(() => { C.running = false; C.phase = null; C.label = ''; });
@@ -263,7 +268,7 @@ const server = http.createServer(async (req, res) => {
         for await (const chunk of req) { body += chunk; if (body.length > 1e5) { req.destroy(); return; } }
         const b = JSON.parse(body || '{}');
         if (b.stop) { C.stop = true; return json(res, 200, { ok: true, stopping: true }); }
-        const r = await startCrawl(b.job || 'daily');
+        const r = await startCrawl(b.job || 'daily', { since: b.since, until: b.until });
         return json(res, r.error ? 409 : 200, r);
       }
     }
@@ -396,12 +401,13 @@ const server = http.createServer(async (req, res) => {
       const b = JSON.parse(body || '{}');
       const glos = new Glossary(ROOT);
       const t0 = Date.now();
-      const { added, posts } = mine(ROOT, galleryId, glos, { min: Number(b.min || 2) });
+      const { added, rejected, posts } = mine(ROOT, galleryId, glos, { min: Number(b.min || 2), keepNames: !!b.keepNames });
       glos.save();
       const pending = Object.values(glos.data.candidates).filter((v) => v.status !== 'rejected').length;
       console.log(`  채굴: 글 ${posts}건 · 신규 후보 ${added}개 · 미확인 ${pending}개 (${Date.now() - t0}ms)`);
+      if (rejected.length) console.log(`    캐릭터 이름 자동 기각 ${rejected.length}개: ${rejected.join(', ')}`);
       return json(res, 200, {
-        ok: true, added, posts, pending, ms: Date.now() - t0,
+        ok: true, added, posts, pending, rejected, ms: Date.now() - t0,
         candidates: Object.entries(glos.data.candidates)
           .filter(([, v]) => v.status !== 'rejected')
           .sort((a, b2) => (b2[1].score || 0) - (a[1].score || 0)).slice(0, 150)

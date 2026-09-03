@@ -4,6 +4,10 @@
 //   node dcgall/crawl.mjs --mode recommend --pages 5 --detail
 //   node dcgall/crawl.mjs --mode search --keyword 프롬프트 --pages 3 --detail
 //   node dcgall/crawl.mjs --job daily --dry        (저장하지 않고 미리보기)
+//   node dcgall/crawl.mjs --job daily --fresh-share 0.5   본문 상한 중 최신순으로 채울 몫
+//   node dcgall/crawl.mjs --job daily --no-backlog        저장소의 미수집 글은 건너뛴다
+//   node dcgall/crawl.mjs --mode all --pages 40 --since 2026-08-01 --until 2026-08-07 --detail
+//                                                 기간을 정해 그 사이 글만 수집
 // 실제 수집 로직은 lib/crawler.mjs 에 있고 뷰어의 '수집' 버튼과 공유한다.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -46,8 +50,13 @@ const opts = {
   onlyRecommend: args['only-recommend'] !== undefined ? args['only-recommend'] !== 'false' : undefined,
   maxDetail: args['max-detail'],
   minRecommend: args['min-recommend'],
+  freshShare: args['fresh-share'] !== undefined ? Number(args['fresh-share']) : undefined,
+  backlog: args['no-backlog'] ? false : undefined,
   comments: args['no-comments'] ? false : undefined,
   refresh: !!args.refresh,
+  since: args.since,
+  until: args.until,
+  dedup: args['no-dedup'] ? false : (args.dedup ? true : undefined),
   withNotice: !!args['with-notice'],
   dry: !!args.dry,
   source: 'cli',
@@ -61,6 +70,8 @@ const r = await runCrawl(ROOT, cfg, opts, ({ phase, done, total, label }) => {
 process.stdout.write('\r' + ' '.repeat(70) + '\r');
 for (const l of r.logs) console.log('  ' + l);
 const m = r.manifest;
-console.log(`\n▶ run ${m.run_id} · 수집 ${r.records} (신규 ${r.newCount}) · 본문 ${r.detailDone} · 요청 ${m.http.requests} · 에러 ${r.errors.length}`);
+const range = m.range ? ` · 기간 ${m.range.since || '처음'}~${m.range.until || '지금'}` : '';
+const dup = r.skipped ? ` · 중복 건너뜀 ${r.skipped}` : '';
+console.log(`\n▶ run ${m.run_id}${range} · 수집 ${r.records} (신규 ${r.newCount}${dup}) · 본문 ${r.detailDone} · 요청 ${m.http.requests} · 에러 ${r.errors.length}`);
 if (opts.dry) console.log('  [dry-run] 저장하지 않았습니다.');
 else console.log(`  저장: dcgall/data/${m.gallery.id}/  ·  리포트: node dcgall/report.mjs`);
