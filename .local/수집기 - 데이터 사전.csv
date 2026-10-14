@@ -1,0 +1,19 @@
+ST ID,Status,Created Version,Updated Version,저장 위치,경로,타입,의미,값 목록,진입 트리거,해제 트리거,유지 범위,영향 기능,Notes
+ST-001,live,1.0.0,1.0.0,메모리,C.running,boolean,수집 작업 진행 중 여부,true(수집 중) · false(대기),runCrawl 시작,runCrawl 종료,탭 세션,F-001 · F-002,서버 프로세스 상태
+ST-002,live,1.0.0,1.0.0,메모리,C.job,string,현재 실행 중인 job 이름,daily · sweep · watch · null,startCrawl 호출,수집 완료·중단,탭 세션,F-001,
+ST-003,live,1.0.0,1.0.0,메모리,C.phase,string,수집 단계,list(목록 수집) · detail(본문 수집) · null,단계 전환,수집 완료·중단,탭 세션,F-001,프로그레스 표시용
+ST-004,live,1.0.0,1.0.0,메모리,Q.running,boolean,보존 큐 진행 중 여부,true(진행 중) · false(대기),drain 시작,큐 비워짐,탭 세션,F-026 · F-027,
+ST-005,live,1.0.0,1.0.0,메모리,Q.items,array,보존 대기 목록,{no · base} 배열,일괄 북마크 시 추가,drain 에서 소비,탭 세션,F-012,
+ST-006,live,1.0.0,1.0.0,localStorage,S.q,string,검색 쿼리,사용자 입력 문자열,검색창 입력,검색창 비움,새로고침 시 초기화,F-003,
+ST-007,live,1.0.0,1.0.0,localStorage,S.sort,string,정렬 기준,d · rc · v · cc · cs · seen,드롭다운 변경,,새로고침 시 초기화,F-007,
+ST-008,live,1.0.0,1.0.0,localStorage,S.cat,string,선택된 분류 필터,분류 key · '',칩 클릭,같은 칩 클릭,새로고침 시 초기화,F-004,
+ST-009,live,1.0.0,1.0.0,localStorage,S.flag,string,특수 필터 상태,amb(애매) · ed(수정함) · '',칩 클릭,같은 칩 클릭,새로고침 시 초기화,F-004,
+ST-010,live,1.0.0,1.0.0,localStorage,SEL,Set,선택된 글 번호 집합,글 번호 Set,체크박스·로우 클릭,선택해제·북마크,새로고침 시 초기화,F-010 · F-011,
+ST-011,live,1.0.0,1.0.0,파일,labels.json,object,수동 분류 라벨 저장소,{no: {category · by · at}},F-009 · F-013,없음,새로고침 후 유지,F-009 · F-013,
+ST-012,live,1.0.0,1.0.0,파일,bookmarks.json,object,북마크 저장소,{no: {at · note · tags · archived}},F-012 · F-017 · F-018,F-022,새로고침 후 유지,F-012 ~ F-022,
+ST-013,live,1.0.0,1.0.0,파일,glossary.json,object,은어 사전,{terms · concepts · patterns · candidates · stopwords},F-024 · F-025,없음,새로고침 후 유지,F-023 ~ F-025,
+ST-014,live,1.0.0,1.0.0,파일,config.json,object,설정 파일,jobs · gallery · http · report,F-015,없음,새로고침 후 유지,F-001 · F-015,
+ST-015,live,1.0.0,1.0.0,파일,posts/*.jsonl,JSONL,글 저장소,레코드 한 줄씩,F-001 수집,없음,새로고침 후 유지,F-003 ~ F-009,append-only
+ST-016,live,1.0.0,1.0.0,파일,archive/<no>/,directory,보존본,post.json · raw.html · img/,F-012 보존 완료,없음,새로고침 후 유지,F-016,
+ST-017,live,1.0.0,1.0.0,메모리,meta.server,boolean,서버 모드 여부,true(서버) · false(정적),페이지 로드,없음,탭 세션,F-009 · F-012 ~ F-027,정적 모드는 편집 불가
+ST-018,live,1.0.0,1.0.0,메모리,visible,array,현재 화면에 보이는 글 번호,글 번호 배열,render 함수,render 함수,새로고침 시 초기화,F-010 · F-011,Shift 범위 선택용

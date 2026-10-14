@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patterns Preview</title>
+  <style>
+    :root {
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --primary-light: #EFF6FF;
+      --primary-muted: #BFDBFE;
+
+      --text-primary: #111827;
+      --text-secondary: #4B5563;
+      --text-tertiary: #9CA3AF;
+      --text-inverse: #FFFFFF;
+
+      --bg-base: #FFFFFF;
+      --bg-subtle: #F9FAFB;
+      --bg-muted: #F3F4F6;
+
+      --border-default: #E5E7EB;
+      --border-strong: #D1D5DB;
+
+      --danger: #EF4444;
+      --danger-light: #FEE2E2;
+      --success: #10B981;
+      --warning: #F59E0B;
+
+      --rounded-sm: 6px;
+      --rounded-md: 10px;
+      --rounded-lg: 14px;
+      --rounded-xl: 20px;
+      --rounded-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      --font-family: "Pretendard", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: var(--space-8);
+    }
+
+    h1 { font-size: 32px; font-weight: 700; margin-bottom: var(--space-2); }
+    .subtitle { color: var(--text-tertiary); margin-bottom: var(--space-8); }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: var(--space-8) 0 var(--space-4);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .pattern-section {
+      background: var(--bg-base);
+      border-radius: var(--rounded-lg);
+      overflow: hidden;
+      margin-bottom: var(--space-8);
+      border: 1px solid var(--border-default);
+    }
+
+    .pattern-title {
+      padding: var(--space-4) var(--space-6);
+      background: var(--bg-subtle);
+      font-weight: 600;
+      font-size: 15px;
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .pattern-content {
+      padding: var(--space-6);
+    }
+
+    /* ========== COMMON COMPONENTS ========== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      height: 40px;
+      padding: 0 var(--space-5);
+      border: none;
+      border-radius: var(--rounded-md);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--text-inverse);
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-secondary {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .btn-secondary:hover { background: var(--primary-muted); }
+
+    .btn-tertiary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-default);
+    }
+    .btn-tertiary:hover { background: var(--bg-muted); }
+
+    .btn-danger {
+      background: var(--danger);
+      color: var(--text-inverse);
+    }
+
+    .btn-sm { height: 32px; padding: 0 var(--space-3); font-size: 13px; }
+
+    .input {
+      height: 40px;
+      padding: 0 var(--space-4);
+      border: 1px solid var(--border-default);
+      border-radius: var(--rounded-md);
+      font-family: inherit;
+      font-size: 14px;
+      background: var(--bg-base);
+      transition: all 150ms;
+    }
+    .input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+    .input::placeholder { color: var(--text-tertiary); }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      background: var(--bg-muted);
+      border-radius: var(--rounded-full);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 150ms;
+      white-space: nowrap;
+    }
+    .chip:hover { background: var(--border-default); }
+    .chip.active {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge {
+      display: inline-flex;
+      padding: 4px 10px;
+      border-radius: var(--rounded-sm);
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--bg-muted);
+      color: var(--text-secondary);
+    }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border-strong);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 150ms;
+      flex-shrink: 0;
+    }
+    .checkbox.checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* ========== 1. SEARCH + FILTER ========== */
+    .search-filter {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .search-row {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .search-input {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-input input {
+      width: 100%;
+      padding-left: 40px;
+    }
+
+    .search-input::before {
+      content: '🔍';
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+    }
+
+    .sort-select {
+      width: 140px;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: var(--space-2);
+      overflow-x: auto;
+      padding-bottom: var(--space-2);
+    }
+
+    .filter-row::-webkit-scrollbar { height: 4px; }
+    .filter-row::-webkit-scrollbar-thumb {
+      background: var(--border-default);
+      border-radius: 2px;
+    }
+
+    /* ========== 2. CARD LIST ========== */
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .list-card {
+      display: flex;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      background: var(--bg-base);
+      border: 1px solid var(--border-default);
+      border-radius: var(--rounded-lg);
+      cursor: pointer;
+      transition: all 250ms ease;
+    }
+
+    .list-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .list-card.selected {
+      background: var(--primary-light);
+      border-color: var(--primary-muted);
+    }
+
+    .list-card-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .list-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+
+    .list-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .list-card-meta {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .list-card-body {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--border-default);
+    }
+
+    /* ========== 3. SELECTION BAR ========== */
+    .selection-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding: var(--space-4) var(--space-6);
+      background: var(--bg-base);
+      border: 1px solid var(--border-default);
+      border-radius: var(--rounded-lg);
+      box-shadow: var(--shadow-md);
+    }
+
+    .selection-count {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    .selection-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border-default);
+    }
+
+    .selection-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex: 1;
+    }
+
+    .selection-input {
+      width: 160px;
+    }
+
+    /* ========== 4. HEADER NAV ========== */
+    .header-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      padding: 0 var(--space-6);
+      background: var(--bg-base);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .header-logo {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .header-logo span {
+      font-weight: 400;
+      color: var(--text-tertiary);
+      font-size: 13px;
+      margin-left: var(--space-2);
+    }
+
+    .header-links {
+      display: flex;
+      gap: var(--space-1);
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--rounded-sm);
+      transition: all 150ms;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: var(--bg-muted);
+    }
+
+    .nav-link.active { color: var(--primary); }
+
+    /* ========== 5. CONFIRM MODAL ========== */
+    .modal-overlay {
+      background: rgba(0,0,0,0.4);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 280px;
+    }
+
+    .confirm-modal {
+      background: var(--bg-base);
+      border-radius: var(--rounded-xl);
+      padding: var(--space-8);
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: var(--shadow-xl);
+      animation: modal-in 0.3s ease-out;
+    }
+
+    @keyframes modal-in {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .confirm-icon {
+      font-size: 48px;
+      margin-bottom: var(--space-4);
+    }
+
+    .confirm-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .confirm-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-6);
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: var(--space-3);
+      justify-content: center;
+    }
+
+    /* Action Sheet */
+    .action-sheet-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      width: 100%;
+      max-width: 340px;
+      animation: sheet-up 0.3s ease-out;
+    }
+
+    @keyframes sheet-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .action-sheet {
+      background: var(--bg-base);
+      border-radius: var(--rounded-lg);
+      overflow: hidden;
+    }
+
+    .action-sheet-title {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      text-align: center;
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .action-sheet-item {
+      display: block;
+      width: 100%;
+      padding: var(--space-4);
+      font-size: 17px;
+      text-align: center;
+      background: none;
+      border: none;
+      border-top: 1px solid var(--border-default);
+      cursor: pointer;
+      transition: background var(--duration-fast) var(--ease-out);
+    }
+
+    .action-sheet-item:hover {
+      background: var(--bg-muted);
+    }
+
+    .action-sheet-item--destructive { color: var(--danger); }
+    .action-sheet-item--default { color: var(--primary); }
+    .action-sheet-item--cancel { font-weight: 600; color: var(--text-primary); border-top: none; }
+
+    /* Modal with Header */
+    .modal-with-header {
+      background: var(--bg-base);
+      border-radius: var(--rounded-xl);
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+      animation: modal-in 0.3s ease-out;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      padding: 0 var(--space-5);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .modal-header-btn {
+      font-size: 15px;
+      font-weight: 500;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--space-2);
+    }
+
+    .modal-header-btn--cancel { color: var(--text-secondary); }
+    .modal-header-btn--done { color: var(--primary); font-weight: 600; }
+
+    .modal-header-title {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      padding: var(--space-6);
+    }
+
+    /* ========== 6. FORM ========== */
+    .form-group {
+      margin-bottom: var(--space-6);
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-2);
+    }
+
+    .form-input {
+      width: 100%;
+    }
+
+    .form-hint {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: var(--space-1);
+    }
+
+    .form-error {
+      font-size: 13px;
+      color: var(--danger);
+      margin-top: var(--space-1);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: var(--space-3);
+      justify-content: flex-end;
+      margin-top: var(--space-8);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--border-default);
+    }
+
+    /* ========== 7. LOADING ========== */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-muted) 25%, var(--border-default) 50%, var(--bg-muted) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--rounded-sm);
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-card {
+      padding: var(--space-5);
+      border: 1px solid var(--border-default);
+      border-radius: var(--rounded-lg);
+    }
+
+    .skeleton-title {
+      height: 20px;
+      width: 60%;
+      margin-bottom: var(--space-3);
+    }
+
+    .skeleton-text {
+      height: 14px;
+      width: 40%;
+    }
+
+    /* ========== 8. EMPTY STATE ========== */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: var(--space-4);
+      opacity: 0.5;
+    }
+
+    .empty-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-2);
+    }
+
+    .empty-desc {
+      font-size: 14px;
+      color: var(--text-tertiary);
+      margin-bottom: var(--space-6);
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      position: fixed;
+      top: var(--space-4);
+      right: var(--space-4);
+      padding: var(--space-2) var(--space-4);
+      background: var(--bg-base);
+      border: 1px solid var(--border-default);
+      border-radius: var(--rounded-md);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      z-index: 100;
+    }
+
+    body.dark-mode {
+      --text-primary: #F9FAFB;
+      --text-secondary: #D1D5DB;
+      --text-tertiary: #9CA3AF;
+      --bg-base: #111827;
+      --bg-subtle: #0D1117;
+      --bg-muted: #374151;
+      --border-default: #374151;
+      --border-strong: #4B5563;
+    }
+  </style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.body.classList.toggle('dark-mode')">🌓 테마</button>
+
+<h1>Patterns Preview</h1>
+<p class="subtitle">컴포넌트를 조합한 UI 패턴</p>
+
+<!-- 1. Search + Filter -->
+<section class="pattern-section">
+  <div class="pattern-title">1. 검색 + 필터</div>
+  <div class="pattern-content">
+    <div class="search-filter">
+      <div class="search-row">
+        <div class="search-input">
+          <input type="text" class="input" placeholder="검색어를 입력하세요">
+        </div>
+        <select class="input sort-select">
+          <option>최신순</option>
+          <option>오래된순</option>
+          <option>이름순</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <span class="chip active">전체</span>
+        <span class="chip">디자인</span>
+        <span class="chip">개발</span>
+        <span class="chip">기획</span>
+        <span class="chip">마케팅</span>
+        <span class="chip">데이터</span>
+      </div>
+      <div class="filter-row">
+        <span class="chip">React</span>
+        <span class="chip active">TypeScript</span>
+        <span class="chip">Node.js</span>
+        <span class="chip active">CSS</span>
+        <span class="chip">Figma</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Card List -->
+<section class="pattern-section">
+  <div class="pattern-title">2. 카드 리스트</div>
+  <div class="pattern-content">
+    <div class="card-list">
+      <div class="list-card">
+        <div class="checkbox" onclick="this.classList.toggle('checked'); this.closest('.list-card').classList.toggle('selected')"></div>
+        <div class="list-card-content">
+          <div class="list-card-header">
+            <div class="list-card-title">디자인 시스템 구축하기</div>
+            <span class="badge">디자인</span>
+          </div>
+          <div class="list-card-meta">2024.10.14 · 조회 128 · 댓글 5</div>
+        </div>
+      </div>
+      <div class="list-card selected">
+        <div class="checkbox checked" onclick="this.classList.toggle('checked'); this.closest('.list-card').classList.toggle('selected')"></div>
+        <div class="list-card-content">
+          <div class="list-card-header">
+            <div class="list-card-title">React 18 새로운 기능 정리</div>
+            <span class="badge">개발</span>
+          </div>
+          <div class="list-card-meta">2024.10.13 · 조회 256 · 댓글 12</div>
+          <div class="list-card-body">
+            React 18에서 추가된 Concurrent Features, Suspense 개선사항, 그리고 새로운 훅들에 대해 정리했습니다.
+          </div>
+        </div>
+      </div>
+      <div class="list-card">
+        <div class="checkbox" onclick="this.classList.toggle('checked'); this.closest('.list-card').classList.toggle('selected')"></div>
+        <div class="list-card-content">
+          <div class="list-card-header">
+            <div class="list-card-title">사용자 인터뷰 결과 분석</div>
+            <span class="badge">기획</span>
+          </div>
+          <div class="list-card-meta">2024.10.12 · 조회 89 · 댓글 3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Selection Bar -->
+<section class="pattern-section">
+  <div class="pattern-title">3. 선택 + 액션</div>
+  <div class="pattern-content">
+    <div class="selection-bar">
+      <span class="selection-count">2개 선택됨</span>
+      <div class="selection-divider"></div>
+      <div class="selection-actions">
+        <button class="btn btn-tertiary btn-sm">전체 선택</button>
+        <button class="btn btn-tertiary btn-sm">선택 해제</button>
+        <input type="text" class="input selection-input" placeholder="태그 입력...">
+        <select class="input" style="width: 120px;">
+          <option>분류 변경</option>
+          <option>디자인</option>
+          <option>개발</option>
+        </select>
+      </div>
+      <button class="btn btn-danger btn-sm">삭제</button>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Header Nav -->
+<section class="pattern-section">
+  <div class="pattern-title">4. 헤더 + 네비게이션</div>
+  <div class="pattern-content" style="padding: 0;">
+    <div class="header-nav">
+      <div class="header-logo">
+        Logo
+        <span>부가설명</span>
+      </div>
+      <nav class="header-links">
+        <a href="#" class="nav-link active">홈</a>
+        <a href="#" class="nav-link">수집</a>
+        <a href="#" class="nav-link">서재</a>
+        <a href="#" class="nav-link">사전</a>
+      </nav>
+      <button class="btn btn-primary btn-sm">내보내기</button>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Confirm Modal -->
+<section class="pattern-section">
+  <div class="pattern-title">5. 확인 모달 패턴</div>
+
+  <h3 style="font-size: 15px; margin: var(--space-4) 0; color: var(--text-secondary);">5-1. Alert Dialog (2버튼)</h3>
+  <div class="pattern-content" style="padding: 0;">
+    <div class="modal-overlay">
+      <div class="confirm-modal">
+        <div class="confirm-icon">⚠️</div>
+        <div class="confirm-title">정말 삭제하시겠습니까?</div>
+        <div class="confirm-desc">
+          이 작업은 되돌릴 수 없습니다.<br>
+          선택한 2개 항목이 영구적으로 삭제됩니다.
+        </div>
+        <div class="confirm-actions">
+          <button class="btn btn-tertiary" style="font-weight: 600;">취소</button>
+          <button class="btn btn-danger">삭제</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size: 15px; margin: var(--space-6) 0 var(--space-4); color: var(--text-secondary);">5-2. Action Sheet (3+ 선택지)</h3>
+  <div class="pattern-content" style="padding: 0;">
+    <div class="modal-overlay" style="align-items: flex-end; padding-bottom: var(--space-6);">
+      <div class="action-sheet-wrapper">
+        <div class="action-sheet">
+          <div class="action-sheet-title">이 항목을 어떻게 처리할까요?</div>
+          <button class="action-sheet-item action-sheet-item--destructive">영구 삭제</button>
+          <button class="action-sheet-item action-sheet-item--default">오늘 처리하기</button>
+          <button class="action-sheet-item action-sheet-item--default">내일로 미루기</button>
+          <button class="action-sheet-item action-sheet-item--default">나중에 알림 받기</button>
+        </div>
+        <div class="action-sheet">
+          <button class="action-sheet-item action-sheet-item--cancel">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size: 15px; margin: var(--space-6) 0 var(--space-4); color: var(--text-secondary);">5-3. Modal with Header (복잡한 작업)</h3>
+  <div class="pattern-content" style="padding: 0;">
+    <div class="modal-overlay">
+      <div class="modal-with-header">
+        <div class="modal-header">
+          <button class="modal-header-btn modal-header-btn--cancel">취소</button>
+          <span class="modal-header-title">항목 삭제</span>
+          <button class="modal-header-btn modal-header-btn--done">완료</button>
+        </div>
+        <div class="modal-body">
+          <div style="margin-bottom: var(--space-4);">
+            <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: var(--space-3);">삭제할 항목:</div>
+            <div style="font-size: 14px; color: var(--text-primary); line-height: 1.8;">
+              • 대화 1: "안녕하세요..."<br>
+              • 대화 2: "오늘 날씨가..."<br>
+              • 대화 3: "프로젝트 관련..."
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+            <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 14px;">
+              <input type="radio" name="delete-option" checked> 휴지통으로 이동 (30일 후 삭제)
+            </label>
+            <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 14px; color: var(--danger);">
+              <input type="radio" name="delete-option"> 즉시 영구 삭제
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Form -->
+<section class="pattern-section">
+  <div class="pattern-title">6. 입력 폼</div>
+  <div class="pattern-content">
+    <form>
+      <div class="form-group">
+        <label class="form-label">제목</label>
+        <input type="text" class="input form-input" placeholder="제목을 입력하세요">
+        <div class="form-hint">최대 100자까지 입력 가능합니다</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">이메일</label>
+        <input type="email" class="input form-input" value="invalid-email" style="border-color: var(--danger);">
+        <div class="form-error">올바른 이메일 형식이 아닙니다</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">설명</label>
+        <textarea class="input form-input" style="height: 100px; padding: 12px;" placeholder="설명을 입력하세요"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-tertiary">취소</button>
+        <button type="submit" class="btn btn-primary">저장</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- 7. Loading -->
+<section class="pattern-section">
+  <div class="pattern-title">7. 로딩 상태 (Skeleton)</div>
+  <div class="pattern-content">
+    <div class="card-list">
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-title"></div>
+        <div class="skeleton skeleton-text"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-title"></div>
+        <div class="skeleton skeleton-text"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. Empty State -->
+<section class="pattern-section">
+  <div class="pattern-title">8. 빈 상태</div>
+  <div class="pattern-content">
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">아직 항목이 없습니다</div>
+      <div class="empty-desc">새로운 항목을 추가하거나 다른 필터를 선택해보세요</div>
+      <button class="btn btn-primary">+ 새 항목 추가</button>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('.filter-row .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const row = chip.closest('.filter-row');
+      if (row.querySelector('.chip.active')?.textContent === '전체') {
+        row.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      } else {
+        chip.classList.toggle('active');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

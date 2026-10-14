@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI채팅 갤러리 수집기 - 디자인 가이드</title>
+  <style>
+    :root {
+      --bg:#f5f8fc; --panel:#fff; --sunken:#eef3fa;
+      --ink:#152232; --ink2:#3d5068; --dim:#7488a0; --faint:#9aabc0;
+      --line:#dde6f1; --line2:#eaf0f7;
+      --accent:#2166cf; --accent-h:#1a55b0; --accent-w:#e7f0fd; --accent-b:#b9d3f7;
+      --chip:#eef3fa; --hi:#ffeeb0; --ok:#1d7f5e; --warn:#b3781a; --bad:#c0413c;
+      --ctl:34px; --r:8px; --r-sm:5px;
+    }
+    @media(prefers-color-scheme:dark){:root{
+      --bg:#0e141d; --panel:#161e2a; --sunken:#111925;
+      --ink:#e8eff8; --ink2:#c2d0e2; --dim:#8497ae; --faint:#6b7e96;
+      --line:#243244; --line2:#1c2735;
+      --accent:#5b9df5; --accent-h:#7ab0f8; --accent-w:#16283f; --accent-b:#2f4d73;
+      --chip:#1c2735; --hi:#5a4a12; --ok:#5fc79b; --warn:#dfb457; --bad:#e2726c;
+    }}
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 32px;
+      background: var(--bg); color: var(--ink);
+      font: 14px/1.6 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", Pretendard, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      max-width: 900px; margin: 0 auto;
+    }
+    h1 { font-size: 24px; margin: 0 0 32px; color: var(--ink); font-weight: 700; }
+    h2 { font-size: 16px; margin: 40px 0 16px; color: var(--ink); font-weight: 600; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+    h3 { font-size: 13px; margin: 24px 0 12px; color: var(--dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .section { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+
+    /* 컬러 스와치 */
+    .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .color-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r); border: 1px solid var(--line); }
+    .swatch { width: 40px; height: 40px; border-radius: 6px; flex-shrink: 0; border: 1px solid var(--line); }
+    .color-info { min-width: 0; }
+    .color-name { font-weight: 600; font-size: 13px; color: var(--ink); }
+    .color-var { font-size: 11px; color: var(--dim); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .color-hex { font-size: 11px; color: var(--faint); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    /* 텍스트 샘플 */
+    .text-sample { padding: 12px 0; border-bottom: 1px solid var(--line2); }
+    .text-sample:last-child { border-bottom: none; }
+    .text-label { font-size: 11px; color: var(--faint); margin-bottom: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .sample-title { font-weight: 600; font-size: 14px; line-height: 1.4; letter-spacing: -0.01em; color: var(--ink); }
+    .sample-body { font-size: 14px; line-height: 1.6; color: var(--ink); }
+    .sample-ink2 { font-size: 13px; line-height: 1.72; color: var(--ink2); }
+    .sample-dim { font-size: 12px; color: var(--dim); }
+    .sample-faint { font-size: 11px; color: var(--faint); }
+    .sample-vlabel { font-size: 10.5px; color: var(--faint); letter-spacing: 0.08em; font-weight: 700; text-transform: uppercase; }
+    .sample-chip { font-size: 11px; color: var(--dim); background: var(--chip); border-radius: var(--r-sm); padding: 1px 8px; display: inline-block; }
+    .sample-accent { color: var(--accent); }
+    .sample-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--dim); }
+
+    /* 상태 컬러 */
+    .status-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+    .status-item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: var(--r); border: 1px solid var(--line); }
+    .status-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+    /* 컨트롤 예시 */
+    .control-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+    .ctl { height: var(--ctl); border: 1px solid var(--line); background: var(--panel); color: var(--ink2);
+           border-radius: var(--r); padding: 0 12px; font: inherit; font-size: 13px; line-height: 1; vertical-align: middle; }
+    button.ctl { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    button.ctl:hover { border-color: var(--accent-b); background: var(--accent-w); color: var(--accent); }
+    button.ctl.on, button.ctl.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .chip { font-size: 11px; color: var(--dim); background: var(--chip); border-radius: var(--r-sm); padding: 1px 8px; white-space: nowrap; }
+    .tag { font-size: 11px; background: var(--accent-w); border: 1px solid var(--accent-b); color: var(--accent); border-radius: var(--r-sm); padding: 1px 9px; }
+
+    mark { background: var(--hi); color: #152232; border-radius: 2px; padding: 0 1px; }
+
+    /* 카드 상태 */
+    .card-demo { background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 12px 14px; margin: 8px 0; }
+    .card-demo.edited { box-shadow: inset 3px 0 0 var(--ok); }
+    .card-demo.amb { box-shadow: inset 3px 0 0 var(--warn); }
+    .card-demo.gone { box-shadow: inset 3px 0 0 var(--bad); }
+    .card-demo.picked { background: var(--accent-w); border-color: var(--accent); }
+
+    /* 반응형 변수 표 */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line2); }
+    th { color: var(--dim); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    td code { background: var(--sunken); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <h1>AI채팅 갤러리 수집기 - 디자인 가이드</h1>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <h2>1. 컬러 팔레트</h2>
+
+  <div class="section">
+    <h3>배경 & 표면</h3>
+    <div class="color-grid">
+      <div class="color-item">
+        <div class="swatch" style="background:#f5f8fc"></div>
+        <div class="color-info">
+          <div class="color-name">배경 (Background)</div>
+          <div class="color-var">--bg</div>
+          <div class="color-hex">Light: #f5f8fc / Dark: #0e141d</div>
+        </div>
+      </div>
+      <div class="color-item">
+        <div class="swatch" style="background:#fff"></div>
+        <div class="color-info">
+          <div class="color-name">패널 (Panel)</div>
+          <div class="color-var">--panel</div>
+          <div class="color-hex">Light: #ffffff / Dark: #161e2a</div>
+        </div>
+      </div>
+      <div class="color-item">
+        <div class="swatch" style="background:#eef3fa"></div>
+        <div class="color-info">
+          <div class="color-name">눌린 영역 (Sunken)</div>
+          <div class="color-var">--sunken</div>
+          <div class="color-hex">Light: #eef3fa / Dark: #111925</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>텍스트</h3>
+    <div class="color-grid">
+      <div class="color-item">
+        <div class="swatch" style="background:#152232"></div>
+        <div class="color-info">
+          <div class="color-name">주요 텍스트 (Ink)</div>
+          <div class="color-var">--ink</div>
+          <div class="color-hex">Light: #152232 / Dark: #e8eff8</div>
+        </div>
+      </div>
+      <div class="color-item">
+        <div class="swatch" style="background:#3d5068"></div>
+        <div class="color-info">
+          <div class="color-name">보조 텍스트 (Ink2)</div>
+          <div class="color-var">--ink2</div>
+          <div class="color-hex">Light: #3d5068 / Dark: #c2d0e2</div>
+        </div>
+      </div>
+      <div class="color-item">
+        <div class="swatch" style="background:#7488a0"></div>
+        <div class="color-info">
+          <div class="color-name">흐린 텍스트 (Dim)</div>
+          <div class="color-var">--dim</div>
+          <div class="color-hex">Light: #7488a0 / Dark: #8497ae</div>
+        </div>
+      </div>
+      <div class="color-item">
+        <div class="swatch" style="background:#9aabc0"></div>
+        <div class="color-info">
+          <div class="color-name">매우 흐린 (Faint)</div>
+          <div class="color-var">--faint</div>
+          <div class="color-hex">Light: #9aabc0 / Dark: #6b7e96</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>구분선</h3>
+    <div class="color-grid">
+      <div class="color-item">
+        <div class="swatch" style="background:#dde6f1"></div>
+        <div class="color-info">
+          <div class="color-name">주요 구분선 (Line)</div>
+          <div class="color-var">--line</div>
+          <div class="color-hex">Light: #dde6f1 / Dark: #243244</div>
+        </div>
+      </div>
+      <div class="color-item">
+        <div class="swatch" style="background:#eaf0f7"></div>
+        <div class="color-info">
+          <div class="color-name">보조 구분선 (Line2)</div>
+          <div class="color-var">--line2</div>
+          <div class="color-hex">Light: #eaf0f7 / Dark: #1c2735</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>강조색 (Accent)</h3>
+    <div class="color-grid">
+      <div class="color-item">
+        <div class="swatch" style="background:#2166cf"></div>
+        <div class="color-info">
+          <div class="color-name">강조 (Accent)</div>
+          <div class="color-var">--accent</div>
+          <div class="color-hex">Light: #2166cf / Dark: #5b9df5</div>
+        </div>
+      </div>
+      <div class="color-item">
+        <div class="swatch" style="background:#1a55b0"></div>
+        <div class="color-info">
+          <div class="color-name">강조 Hover</div>
+          <div class="color-var">--accent-h</div>
+          <div class="color-hex">Light: #1a55b0 / Dark: #7ab0f8</div>
+        </div>
+      </div>
+      <div class="color-item">
+        <div class="swatch" style="background:#e7f0fd"></div>
+        <div class="color-info">
+          <div class="color-name">강조 배경</div>
+          <div class="color-var">--accent-w</div>
+          <div class="color-hex">Light: #e7f0fd / Dark: #16283f</div>
+        </div>
+      </div>
+      <div class="color-item">
+        <div class="swatch" style="background:#b9d3f7"></div>
+        <div class="color-info">
+          <div class="color-name">강조 테두리</div>
+          <div class="color-var">--accent-b</div>
+          <div class="color-hex">Light: #b9d3f7 / Dark: #2f4d73</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>상태 컬러</h3>
+    <div class="status-grid">
+      <div class="status-item">
+        <div class="status-dot" style="background:#1d7f5e"></div>
+        <div>
+          <div class="color-name">성공 (OK)</div>
+          <div class="color-var">--ok: #1d7f5e / #5fc79b</div>
+        </div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot" style="background:#b3781a"></div>
+        <div>
+          <div class="color-name">경고 (Warn)</div>
+          <div class="color-var">--warn: #b3781a / #dfb457</div>
+        </div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot" style="background:#c0413c"></div>
+        <div>
+          <div class="color-name">오류 (Bad)</div>
+          <div class="color-var">--bad: #c0413c / #e2726c</div>
+        </div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot" style="background:#ffeeb0"></div>
+        <div>
+          <div class="color-name">하이라이트 (Hi)</div>
+          <div class="color-var">--hi: #ffeeb0 / #5a4a12</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <h2>2. 타이포그래피</h2>
+
+  <div class="section">
+    <h3>폰트 스택</h3>
+    <div class="text-sample">
+      <div class="text-label">font-family</div>
+      <div class="sample-mono">-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", Pretendard, "Segoe UI", sans-serif</div>
+    </div>
+    <div class="text-sample">
+      <div class="text-label">monospace (코드/로그용)</div>
+      <div class="sample-mono">ui-monospace, SFMono-Regular, Menlo, monospace</div>
+    </div>
+
+    <h3>텍스트 스타일</h3>
+    <div class="text-sample">
+      <div class="text-label">.ttl — 제목 (14px/1.4, 600, letter-spacing: -0.01em)</div>
+      <div class="sample-title">카드 제목 스타일입니다. The quick brown fox jumps over the lazy dog.</div>
+    </div>
+    <div class="text-sample">
+      <div class="text-label">body — 기본 본문 (14px/1.6)</div>
+      <div class="sample-body">기본 본문 텍스트입니다. 이 스타일은 일반적인 읽기에 사용됩니다.</div>
+    </div>
+    <div class="text-sample">
+      <div class="text-label">.txt — 본문 컨텐츠 (13px/1.72, --ink2)</div>
+      <div class="sample-ink2">카드 내부 본문 텍스트입니다. 약간 작고 부드러운 색상으로 표시됩니다.</div>
+    </div>
+    <div class="text-sample">
+      <div class="text-label">.chip / .metrics — 부가 정보 (11-12px, --dim)</div>
+      <div class="sample-dim">메타 정보, 날짜, 숫자 등 부가적인 정보에 사용됩니다.</div>
+    </div>
+    <div class="text-sample">
+      <div class="text-label">.why — 설명 텍스트 (11px, --faint)</div>
+      <div class="sample-faint">가장 낮은 계층의 텍스트입니다. 부연 설명이나 힌트에 사용됩니다.</div>
+    </div>
+    <div class="text-sample">
+      <div class="text-label">.vlabel — 라벨 (10.5px, 700, uppercase, letter-spacing: 0.08em)</div>
+      <div class="sample-vlabel">LABEL TEXT</div>
+    </div>
+    <div class="text-sample">
+      <div class="text-label">a — 링크</div>
+      <div><a href="#" class="sample-accent">링크 텍스트는 --accent 색상을 사용합니다</a></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <h2>3. 컴포넌트</h2>
+
+  <div class="section">
+    <h3>버튼</h3>
+    <div class="control-row">
+      <button class="ctl">기본 버튼</button>
+      <button class="ctl primary">Primary 버튼</button>
+      <button class="ctl on">활성화 버튼</button>
+      <button class="ctl" disabled>비활성화</button>
+    </div>
+    <div class="text-sample">
+      <div class="text-label">버튼 스펙</div>
+      <div class="sample-mono">height: 34px (모바일 38px) | border-radius: 8px | font-size: 13px | padding: 0 12px</div>
+    </div>
+
+    <h3>칩 & 태그</h3>
+    <div class="control-row">
+      <span class="chip">일반 칩</span>
+      <span class="tag">태그</span>
+      <mark>하이라이트 텍스트</mark>
+    </div>
+
+    <h3>카드 상태</h3>
+    <div class="card-demo">기본 카드</div>
+    <div class="card-demo edited">편집됨 (--ok)</div>
+    <div class="card-demo amb">모호함 (--warn)</div>
+    <div class="card-demo gone">삭제됨 (--bad)</div>
+    <div class="card-demo picked">선택됨 (--accent-w)</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <h2>4. 레이아웃 변수</h2>
+
+  <div class="section">
+    <table>
+      <thead>
+        <tr>
+          <th>변수</th>
+          <th>값</th>
+          <th>용도</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--ctl</code></td>
+          <td>34px (모바일: 38px)</td>
+          <td>컨트롤(버튼, 입력 필드) 높이</td>
+        </tr>
+        <tr>
+          <td><code>--r</code></td>
+          <td>8px</td>
+          <td>입력·버튼 border-radius</td>
+        </tr>
+        <tr>
+          <td><code>--r-sm</code></td>
+          <td>5px</td>
+          <td>칩·세그먼트 border-radius</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <h2>5. 반응형 브레이크포인트</h2>
+
+  <div class="section">
+    <table>
+      <thead>
+        <tr>
+          <th>너비</th>
+          <th>변경사항</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>1080px</code></td>
+          <td>여백 축소 (28px → 20px)</td>
+        </tr>
+        <tr>
+          <td><code>900px</code></td>
+          <td>GNB 2단 구조, 헤더 도구영역 접기 가능, --ctl: 38px</td>
+        </tr>
+        <tr>
+          <td><code>760px</code></td>
+          <td>카드 내 여백/폭 축소</td>
+        </tr>
+        <tr>
+          <td><code>700px</code></td>
+          <td>GNB 버튼 글자→이모지, 브랜드 부가정보 숨김</td>
+        </tr>
+        <tr>
+          <td><code>600px</code></td>
+          <td>세그먼트 버튼 폭 축소, 조회수 숨김</td>
+        </tr>
+        <tr>
+          <td><code>480px</code></td>
+          <td>브랜드 완전히 숨김, 최소 여백 (12px)</td>
+        </tr>
+        <tr>
+          <td><code>430px</code></td>
+          <td>개수 표시(.count, .cat .n) 숨김</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <h2>6. CSS 변수 전체 목록</h2>
+
+  <div class="section">
+    <h3>라이트 모드</h3>
+    <pre class="sample-mono" style="background:var(--sunken);padding:16px;border-radius:8px;overflow-x:auto;white-space:pre-wrap">:root {
+  /* 배경 */
+  --bg: #f5f8fc;
+  --panel: #fff;
+  --sunken: #eef3fa;
+
+  /* 텍스트 */
+  --ink: #152232;
+  --ink2: #3d5068;
+  --dim: #7488a0;
+  --faint: #9aabc0;
+
+  /* 구분선 */
+  --line: #dde6f1;
+  --line2: #eaf0f7;
+
+  /* 강조색 */
+  --accent: #2166cf;
+  --accent-h: #1a55b0;
+  --accent-w: #e7f0fd;
+  --accent-b: #b9d3f7;
+
+  /* 기타 */
+  --chip: #eef3fa;
+  --hi: #ffeeb0;
+  --ok: #1d7f5e;
+  --warn: #b3781a;
+  --bad: #c0413c;
+
+  /* 레이아웃 */
+  --ctl: 34px;
+  --r: 8px;
+  --r-sm: 5px;
+}</pre>
+
+    <h3>다크 모드</h3>
+    <pre class="sample-mono" style="background:var(--sunken);padding:16px;border-radius:8px;overflow-x:auto;white-space:pre-wrap">@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e141d;
+    --panel: #161e2a;
+    --sunken: #111925;
+
+    --ink: #e8eff8;
+    --ink2: #c2d0e2;
+    --dim: #8497ae;
+    --faint: #6b7e96;
+
+    --line: #243244;
+    --line2: #1c2735;
+
+    --accent: #5b9df5;
+    --accent-h: #7ab0f8;
+    --accent-w: #16283f;
+    --accent-b: #2f4d73;
+
+    --chip: #1c2735;
+    --hi: #5a4a12;
+    --ok: #5fc79b;
+    --warn: #dfb457;
+    --bad: #e2726c;
+  }
+}</pre>
+  </div>
+
+</body>
+</html>

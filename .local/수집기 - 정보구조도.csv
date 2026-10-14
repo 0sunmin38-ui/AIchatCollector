@@ -1,0 +1,25 @@
+SCR ID,Status,Created Version,Updated Version,Route (URL·Screen),구분,Description,Depth1,Depth2,Depth3,Depth4,Entry,Exit,Blocked,Forced,Viewport,Notes
+SCR-001,live,1.0.0,1.0.0,/,page,수집 메인 - 헤더 + 글 목록 + 선택 바,수집,,,,주소 진입,새로 수집 → SCR-008 · 내보내기 → 파일 다운로드 · 서재 → SCR-002 · 사전 → SCR-003,내보내기 AND 서재 0건 → 토스트,정적 모드 → 분류·서재 담기 비활성,ALL,로컬 서버 · 정적 HTML · GitHub Pages 세 환경에서 동작
+SCR-002,live,1.0.0,1.0.0,/library,page,서재 - 북마크한 글 목록 + 메모·태그 편집,서재,,,,주소 진입 · SCR-001 탭,내보내기 → 파일 다운로드 · 수집 → SCR-001 · 사전 → SCR-003,내보내기 AND 서재 0건 → 토스트,,ALL,보존본 기준으로 렌더 · 원문 삭제됨 표시
+SCR-003,live,1.0.0,1.0.0,/glossary,page,사전 - 은어 사전 확정·후보·패턴 관리,사전,,,,주소 진입 · SCR-001 탭,채굴 실행 · 후보 확정 · 후보 기각 · 수집 → SCR-001 · 서재 → SCR-002,,,ALL,서버 모드에서만 채굴·확정·기각 가능
+SCR-004,live,1.0.0,1.0.0,/,state,수집 - 글 카드 펼침,수집,글 상세,,,SCR-001 제목 클릭,같은 제목 다시 클릭 → 접기,,,ALL,본문·이미지·댓글 표시
+SCR-005,live,1.0.0,1.0.0,/,state,수집 - 분류 탭 필터,수집,필터,분류,,SCR-001 분류 칩 클릭,다른 분류 · 같은 분류(해제),,,ALL,전체 · 각 분류 · 애매 · 수정
+SCR-006,live,1.0.0,1.0.0,/,state,수집 - 경로·추천 필터,수집,필터,드롭다운,,SCR-001 드롭다운 변경,드롭다운 변경,,,ALL,경로 전체·개념글·검색어별 / 추천 전체·5+·20+·50+
+SCR-007,live,1.0.0,1.0.0,/,state,수집 - 다중 선택 모드,수집,선택,,,SCR-001 체크박스 · 로우 클릭,전체선택 · 선택해제 · 서재 담기 · 분류 변경,0건 선택 → 바 숨김,,ALL,선택 바가 화면 하단에 표시
+SCR-008,live,1.0.0,1.0.0,/,popover,수집 패널 - job 선택 + 실행,수집,수집 패널,,,SCR-001 [새로 수집] 클릭,[실행] → 수집 시작 · 다시 클릭 → 닫기,이미 수집 중 → 에러 메시지,,ALL,매일 가볍게·가끔 몰아서·키워드로 찾기
+SCR-009,live,1.0.0,1.0.0,/,state,수집 패널 - 수집 진행 중,수집,수집 패널,진행,,SCR-008 [실행] 클릭,완료 · [중단] 클릭,,수집 시작 시 자동 전환,ALL,프로그레스 바 + 로그 표시
+SCR-010,live,1.0.0,1.0.0,/,state,수집 패널 - 키워드 편집,수집,수집 패널,키워드,,SCR-008 [키워드로 찾기] 탭,태그 입력 → Enter · 개념 묶음 선택 · 태그 삭제,,,ALL,@개념: 참조 지원
+SCR-011,live,1.0.0,1.0.0,/library,state,서재 - 태그 필터,서재,필터,태그,,SCR-002 태그 칩 클릭,다른 태그 · 같은 태그(해제),,,ALL,등록된 태그만 표시
+SCR-012,live,1.0.0,1.0.0,/library,state,서재 - 다중 선택 모드,서재,선택,,,SCR-002 체크박스 · 로우 클릭,전체선택 · 선택해제 · 태그 일괄 · 분류 일괄 · 서재에서 빼기,0건 선택 → 바 숨김,,ALL,
+SCR-013,live,1.0.0,1.0.0,/library,modal,서재에서 빼기 확인,서재,선택,빼기,,SCR-012 [빼기] 클릭,[확인] → 서재에서 제거 · [취소],,,ALL,보존 파일은 디스크에 남음
+SCR-014,live,1.0.0,1.0.0,/glossary,state,사전 - 후보 확정,사전,후보,확정,,SCR-003 [확정] 클릭,타입 선택 · 정식명 입력 · [저장],,,ALL,서버 모드에서만 동작
+SCR-015,live,1.0.0,1.0.0,/glossary,state,사전 - 후보 기각,사전,후보,기각,,SCR-003 [기각] 클릭,즉시 반영 · stopwords 에 추가,,,ALL,
+SCR-016,live,1.0.0,1.0.0,,api,/api/crawl - 수집 상태 조회·실행·중단,API,수집,,,GET · POST,JSON 응답,,,ALL,GET 상태 · POST job 실행 또는 stop
+SCR-017,live,1.0.0,1.0.0,,api,/api/labels - 라벨 조회·저장,API,라벨,,,GET · POST,JSON 응답,,,ALL,수동 분류 라벨
+SCR-018,live,1.0.0,1.0.0,,api,/api/bookmark - 북마크 조회·저장,API,북마크,,,GET · POST,JSON 응답,,,ALL,서재 등록·해제·메모·태그
+SCR-019,live,1.0.0,1.0.0,,api,/api/bookmark/bulk - 일괄 북마크,API,북마크,일괄,,POST,JSON 응답,,,ALL,서재 일괄 등록·해제 + 보존 큐
+SCR-020,live,1.0.0,1.0.0,,api,/api/queue - 보존 큐 상태,API,큐,,,GET · POST /stop,JSON 응답,,,ALL,큐 진행 상황·중단
+SCR-021,live,1.0.0,1.0.0,,api,/api/glossary - 사전 조회·편집,API,사전,,,GET · POST,JSON 응답,,,ALL,확정·기각
+SCR-022,live,1.0.0,1.0.0,,api,/api/mine - 채굴 실행,API,채굴,,,POST,JSON 응답,,,ALL,신규 후보 발굴
+SCR-023,live,1.0.0,1.0.0,,api,/api/export - 내보내기,API,내보내기,,,GET,파일 다운로드,,,ALL,마크다운 zip
+SCR-024,live,1.0.0,1.0.0,,api,/api/keywords - 감시 키워드 저장,API,키워드,,,POST,JSON 응답,,,ALL,config.json 수정

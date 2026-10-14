@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Components Preview</title>
+  <style>
+    :root {
+      /* Colors */
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --primary-active: #1E40AF;
+      --primary-light: #EFF6FF;
+      --primary-muted: #BFDBFE;
+
+      --text-primary: #111827;
+      --text-secondary: #4B5563;
+      --text-tertiary: #9CA3AF;
+      --text-disabled: #D1D5DB;
+      --text-inverse: #FFFFFF;
+
+      --bg-base: #FFFFFF;
+      --bg-subtle: #F9FAFB;
+      --bg-muted: #F3F4F6;
+
+      --border-default: #E5E7EB;
+      --border-strong: #D1D5DB;
+
+      --success: #10B981;
+      --success-light: #D1FAE5;
+      --warning: #F59E0B;
+      --warning-light: #FEF3C7;
+      --danger: #EF4444;
+      --danger-light: #FEE2E2;
+      --info: #3B82F6;
+      --info-light: #DBEAFE;
+
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Rounded */
+      --rounded-sm: 6px;
+      --rounded-md: 10px;
+      --rounded-lg: 14px;
+      --rounded-xl: 20px;
+      --rounded-full: 9999px;
+
+      /* Shadow */
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.16);
+
+      /* Motion */
+      --duration-fast: 150ms;
+      --duration-normal: 250ms;
+      --duration-slow: 400ms;
+      --ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+      --font-family: "Pretendard", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: var(--space-8);
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: var(--space-2);
+    }
+
+    .subtitle {
+      color: var(--text-tertiary);
+      margin-bottom: var(--space-8);
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: var(--space-8) 0 var(--space-4);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    h3 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin: var(--space-6) 0 var(--space-3);
+    }
+
+    .component-section {
+      background: var(--bg-base);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+      border: 1px solid var(--border-default);
+    }
+
+    .component-row {
+      display: flex;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+
+    .component-label {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-bottom: var(--space-2);
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      border: none;
+      border-radius: var(--rounded-md);
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--duration-fast) ease;
+    }
+
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Sizes */
+    .btn-sm { height: 32px; padding: 0 16px; font-size: 13px; }
+    .btn-md { height: 44px; padding: 0 24px; font-size: 15px; }
+    .btn-lg { height: 52px; padding: 0 32px; font-size: 16px; }
+
+    /* Primary */
+    .btn-primary {
+      background: var(--primary);
+      color: var(--text-inverse);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Secondary */
+    .btn-secondary {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--primary-muted);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--primary-muted);
+    }
+
+    /* Tertiary */
+    .btn-tertiary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-default);
+    }
+    .btn-tertiary:hover:not(:disabled) {
+      background: var(--bg-muted);
+      border-color: var(--border-strong);
+    }
+
+    /* Danger */
+    .btn-danger {
+      background: var(--danger);
+      color: var(--text-inverse);
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: #DC2626;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Ghost */
+    .btn-ghost {
+      background: transparent;
+      color: var(--primary);
+      padding: 8px 12px;
+    }
+    .btn-ghost:hover:not(:disabled) {
+      background: var(--primary-light);
+    }
+
+    /* ========== INPUTS ========== */
+    .input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .input-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .input {
+      height: 48px;
+      padding: 0 var(--space-4);
+      border: 1px solid var(--border-default);
+      border-radius: var(--rounded-md);
+      font-family: inherit;
+      font-size: 15px;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
+      width: 280px;
+    }
+
+    .input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .input::placeholder { color: var(--text-tertiary); }
+
+    .input.error {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px var(--danger-light);
+    }
+
+    .input:disabled {
+      background: var(--bg-subtle);
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .input-hint {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .input-error {
+      font-size: 13px;
+      color: var(--danger);
+    }
+
+    textarea.input {
+      height: auto;
+      min-height: 120px;
+      padding: var(--space-4);
+      resize: vertical;
+    }
+
+    /* Select */
+    .select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%234B5563' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 6l3.5 4 3.5-4h-7z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 44px;
+    }
+
+    /* Checkbox */
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      cursor: pointer;
+    }
+
+    .checkbox {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-strong);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--duration-fast);
+      flex-shrink: 0;
+    }
+
+    .checkbox.checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .checkbox.checked::after {
+      content: '';
+      width: 6px;
+      height: 10px;
+      border: 2px solid white;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg) translate(-1px, -1px);
+    }
+
+    /* Toggle */
+    .toggle {
+      width: 48px;
+      height: 28px;
+      background: var(--border-default);
+      border-radius: 14px;
+      position: relative;
+      cursor: pointer;
+      transition: background var(--duration-fast);
+    }
+
+    .toggle.on { background: var(--primary); }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--duration-fast);
+    }
+
+    .toggle.on::after {
+      transform: translateX(20px);
+    }
+
+    /* ========== CARDS ========== */
+    .card {
+      background: var(--bg-base);
+      border: 1px solid var(--border-default);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-6);
+      transition: transform var(--duration-normal) var(--ease-out),
+                  box-shadow var(--duration-normal) ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-elevated {
+      border: none;
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-elevated:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-4);
+    }
+
+    .card-meta {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: var(--space-4);
+    }
+
+    /* ========== CHIPS & BADGES ========== */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      background: var(--bg-muted);
+      border-radius: var(--rounded-full);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--duration-fast);
+    }
+
+    .chip:hover { background: var(--border-default); }
+
+    .chip.active {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: var(--rounded-sm);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge-default { background: var(--bg-muted); color: var(--text-secondary); }
+    .badge-success { background: var(--success-light); color: #059669; }
+    .badge-warning { background: var(--warning-light); color: #D97706; }
+    .badge-danger { background: var(--danger-light); color: #DC2626; }
+    .badge-info { background: var(--info-light); color: var(--primary); }
+
+    /* ========== MODAL ========== */
+    .modal-demo {
+      position: relative;
+      background: rgba(0,0,0,0.4);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
+    .modal {
+      background: var(--bg-base);
+      border-radius: var(--rounded-xl);
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow-xl);
+      animation: modal-in 0.4s ease-out;
+      overflow: hidden;
+    }
+
+    .modal--simple {
+      padding: var(--space-8);
+    }
+
+    @keyframes modal-in {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Modal Header */
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      padding: 0 var(--space-5);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .modal-header-btn {
+      font-size: 15px;
+      font-weight: 500;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--space-2);
+      border-radius: var(--rounded-sm);
+      transition: background var(--duration-fast) var(--ease-out);
+    }
+
+    .modal-header-btn:hover {
+      background: var(--bg-muted);
+    }
+
+    .modal-header-btn--cancel {
+      color: var(--text-secondary);
+    }
+
+    .modal-header-btn--done {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .modal-header-title {
+      font-size: 17px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Modal Body */
+    .modal-body {
+      padding: var(--space-6);
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .modal-desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-6);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: var(--space-3);
+      justify-content: flex-end;
+    }
+
+    /* ========== ACTION SHEET ========== */
+    .action-sheet-demo {
+      position: relative;
+      background: rgba(0,0,0,0.4);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      min-height: 400px;
+    }
+
+    .action-sheet {
+      background: var(--bg-base);
+      border-radius: var(--rounded-lg);
+      width: 100%;
+      max-width: 360px;
+      overflow: hidden;
+      animation: sheet-up 0.3s ease-out;
+    }
+
+    @keyframes sheet-up {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .action-sheet-title {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      text-align: center;
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .action-sheet-item {
+      display: block;
+      width: 100%;
+      padding: var(--space-4);
+      font-size: 17px;
+      text-align: center;
+      background: none;
+      border: none;
+      border-top: 1px solid var(--border-default);
+      cursor: pointer;
+      transition: background var(--duration-fast) var(--ease-out);
+    }
+
+    .action-sheet-item:hover {
+      background: var(--bg-muted);
+    }
+
+    .action-sheet-item--default {
+      color: var(--primary);
+    }
+
+    .action-sheet-item--destructive {
+      color: var(--danger);
+    }
+
+    .action-sheet-cancel {
+      margin-top: var(--space-2);
+      border-radius: var(--rounded-lg);
+    }
+
+    .action-sheet-item--cancel {
+      font-weight: 600;
+      color: var(--text-primary);
+      border-top: none;
+    }
+
+    /* ========== ALERTS ========== */
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-5);
+      border-radius: var(--rounded-md);
+      font-size: 14px;
+      border-left: 4px solid;
+    }
+
+    .alert-info {
+      background: var(--info-light);
+      border-left-color: var(--info);
+      color: var(--text-primary);
+    }
+
+    .alert-success {
+      background: var(--success-light);
+      border-left-color: var(--success);
+    }
+
+    .alert-warning {
+      background: var(--warning-light);
+      border-left-color: var(--warning);
+    }
+
+    .alert-danger {
+      background: var(--danger-light);
+      border-left-color: var(--danger);
+    }
+
+    .alert-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    /* ========== TOAST ========== */
+    .toast-demo {
+      position: relative;
+      height: 120px;
+      background: var(--bg-muted);
+      border-radius: var(--rounded-md);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: var(--space-4);
+    }
+
+    .toast {
+      background: var(--text-primary);
+      color: var(--text-inverse);
+      padding: 14px 20px;
+      border-radius: var(--rounded-md);
+      font-size: 14px;
+      box-shadow: var(--shadow-lg);
+      animation: toast-in 0.3s ease-out;
+    }
+
+    @keyframes toast-in {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ========== DROPDOWN ========== */
+    .dropdown-demo {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      background: var(--bg-base);
+      border: 1px solid var(--border-default);
+      border-radius: var(--rounded-md);
+      box-shadow: var(--shadow-lg);
+      padding: var(--space-2);
+      min-width: 180px;
+      animation: dropdown-in 0.2s ease-out;
+    }
+
+    @keyframes dropdown-in {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dropdown-item {
+      padding: 10px 14px;
+      border-radius: var(--rounded-sm);
+      font-size: 14px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: background var(--duration-fast);
+    }
+
+    .dropdown-item:hover {
+      background: var(--bg-muted);
+    }
+
+    /* ========== TOOLTIP ========== */
+    .tooltip-demo {
+      display: flex;
+      gap: var(--space-8);
+      padding: var(--space-8);
+    }
+
+    .tooltip-trigger {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text-primary);
+      color: var(--text-inverse);
+      padding: 8px 12px;
+      border-radius: var(--rounded-sm);
+      font-size: 13px;
+      white-space: nowrap;
+      animation: tooltip-in 0.15s ease-out;
+    }
+
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--text-primary);
+    }
+
+    @keyframes tooltip-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ========== NAVIGATION ========== */
+    .nav-demo {
+      background: var(--bg-base);
+      border: 1px solid var(--border-default);
+      border-radius: var(--rounded-md);
+      overflow: hidden;
+    }
+
+    .nav-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      padding: 0 var(--space-6);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: var(--space-1);
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--rounded-sm);
+      transition: all var(--duration-fast);
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: var(--bg-muted);
+    }
+
+    .nav-link.active {
+      color: var(--primary);
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      position: fixed;
+      top: var(--space-4);
+      right: var(--space-4);
+      padding: var(--space-2) var(--space-4);
+      background: var(--bg-base);
+      border: 1px solid var(--border-default);
+      border-radius: var(--rounded-md);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--text-secondary);
+      z-index: 100;
+    }
+
+    /* Dark mode */
+    body.dark-mode {
+      --text-primary: #F9FAFB;
+      --text-secondary: #D1D5DB;
+      --text-tertiary: #9CA3AF;
+      --bg-base: #111827;
+      --bg-subtle: #0D1117;
+      --bg-muted: #374151;
+      --border-default: #374151;
+      --border-strong: #4B5563;
+    }
+  </style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.body.classList.toggle('dark-mode')">
+  🌓 테마 전환
+</button>
+
+<h1>Components Preview</h1>
+<p class="subtitle">단순 · 유연 · 부드러움 · 세련 · 직관</p>
+
+<!-- Buttons -->
+<section class="component-section">
+  <h2>Buttons</h2>
+
+  <h3>Variants</h3>
+  <div class="component-row">
+    <button class="btn btn-primary btn-md">Primary</button>
+    <button class="btn btn-secondary btn-md">Secondary</button>
+    <button class="btn btn-tertiary btn-md">Tertiary</button>
+    <button class="btn btn-danger btn-md">Danger</button>
+    <button class="btn btn-ghost btn-md">Ghost</button>
+  </div>
+
+  <h3>Sizes</h3>
+  <div class="component-row">
+    <button class="btn btn-primary btn-sm">Small</button>
+    <button class="btn btn-primary btn-md">Medium</button>
+    <button class="btn btn-primary btn-lg">Large</button>
+  </div>
+
+  <h3>States</h3>
+  <div class="component-row">
+    <button class="btn btn-primary btn-md">Default</button>
+    <button class="btn btn-primary btn-md" disabled>Disabled</button>
+  </div>
+</section>
+
+<!-- Inputs -->
+<section class="component-section">
+  <h2>Inputs</h2>
+
+  <h3>Text Input</h3>
+  <div class="component-row">
+    <div class="input-wrapper">
+      <label class="input-label">Label</label>
+      <input type="text" class="input" placeholder="Placeholder">
+      <span class="input-hint">도움말 텍스트</span>
+    </div>
+    <div class="input-wrapper">
+      <label class="input-label">Error State</label>
+      <input type="text" class="input error" value="잘못된 입력">
+      <span class="input-error">에러 메시지</span>
+    </div>
+    <div class="input-wrapper">
+      <label class="input-label">Disabled</label>
+      <input type="text" class="input" value="비활성화" disabled>
+    </div>
+  </div>
+
+  <h3>Select</h3>
+  <div class="component-row">
+    <select class="input select">
+      <option>옵션을 선택하세요</option>
+      <option>옵션 1</option>
+      <option>옵션 2</option>
+      <option>옵션 3</option>
+    </select>
+  </div>
+
+  <h3>Textarea</h3>
+  <div class="component-row">
+    <textarea class="input" placeholder="여러 줄 입력..."></textarea>
+  </div>
+
+  <h3>Checkbox & Toggle</h3>
+  <div class="component-row">
+    <label class="checkbox-wrapper">
+      <div class="checkbox" onclick="this.classList.toggle('checked')"></div>
+      <span>체크박스</span>
+    </label>
+    <label class="checkbox-wrapper">
+      <div class="checkbox checked" onclick="this.classList.toggle('checked')"></div>
+      <span>체크됨</span>
+    </label>
+    <div class="toggle" onclick="this.classList.toggle('on')"></div>
+    <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+  </div>
+</section>
+
+<!-- Cards -->
+<section class="component-section">
+  <h2>Cards</h2>
+
+  <h3>Default & Elevated</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">Default Card</div>
+      <div class="card-desc">테두리가 있는 기본 카드입니다. 호버하면 부드럽게 떠오릅니다.</div>
+      <div class="card-meta">2024.10.14</div>
+    </div>
+    <div class="card card-elevated">
+      <div class="card-title">Elevated Card</div>
+      <div class="card-desc">그림자가 있는 떠있는 카드입니다. 더 강조됩니다.</div>
+      <div class="card-meta">방금 전</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Another Card</div>
+      <div class="card-desc">카드는 콘텐츠를 그룹화하고 시각적으로 구분합니다.</div>
+      <div class="card-meta">1시간 전</div>
+    </div>
+  </div>
+</section>
+
+<!-- Chips & Badges -->
+<section class="component-section">
+  <h2>Chips & Badges</h2>
+
+  <h3>Chips (선택 가능)</h3>
+  <div class="component-row">
+    <span class="chip active">전체</span>
+    <span class="chip">디자인</span>
+    <span class="chip">개발</span>
+    <span class="chip">기획</span>
+    <span class="chip">마케팅</span>
+  </div>
+
+  <h3>Badges (상태 표시)</h3>
+  <div class="component-row">
+    <span class="badge badge-default">Default</span>
+    <span class="badge badge-success">Success</span>
+    <span class="badge badge-warning">Warning</span>
+    <span class="badge badge-danger">Danger</span>
+    <span class="badge badge-info">Info</span>
+  </div>
+</section>
+
+<!-- Modal -->
+<section class="component-section">
+  <h2>Modal</h2>
+
+  <h3>Alert Dialog (2버튼)</h3>
+  <div class="modal-demo">
+    <div class="modal modal--simple">
+      <div class="modal-title">정말 삭제하시겠습니까?</div>
+      <div class="modal-desc">이 작업은 되돌릴 수 없습니다.<br>선택한 3개 항목이 영구적으로 삭제됩니다.</div>
+      <div class="modal-actions">
+        <button class="btn btn-tertiary btn-md" style="font-weight: 600;">취소</button>
+        <button class="btn btn-danger btn-md">삭제</button>
+      </div>
+    </div>
+  </div>
+
+  <h3>Modal with Header (복잡한 작업)</h3>
+  <div class="modal-demo">
+    <div class="modal">
+      <div class="modal-header">
+        <button class="modal-header-btn modal-header-btn--cancel">취소</button>
+        <span class="modal-header-title">항목 편집</span>
+        <button class="modal-header-btn modal-header-btn--done">완료</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: var(--space-4);">
+          <label style="display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-2);">제목</label>
+          <input type="text" class="input" value="대화 제목" style="width: 100%;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-2);">메모</label>
+          <textarea class="input" style="width: 100%; min-height: 80px; resize: vertical;">메모 내용...</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Action Sheet -->
+<section class="component-section">
+  <h2>Action Sheet</h2>
+
+  <div class="action-sheet-demo">
+    <div class="action-sheet">
+      <div class="action-sheet-title">이 항목을 어떻게 처리할까요?</div>
+      <button class="action-sheet-item action-sheet-item--destructive">영구 삭제</button>
+      <button class="action-sheet-item action-sheet-item--default">오늘 처리하기</button>
+      <button class="action-sheet-item action-sheet-item--default">내일로 미루기</button>
+      <button class="action-sheet-item action-sheet-item--default">나중에 알림 받기</button>
+    </div>
+    <div class="action-sheet action-sheet-cancel">
+      <button class="action-sheet-item action-sheet-item--cancel">취소</button>
+    </div>
+  </div>
+</section>
+
+<!-- Alerts -->
+<section class="component-section">
+  <h2>Alerts</h2>
+
+  <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <span>정보 알림입니다. 참고할 내용을 안내합니다.</span>
+    </div>
+    <div class="alert alert-success">
+      <span class="alert-icon">✅</span>
+      <span>성공! 작업이 완료되었습니다.</span>
+    </div>
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <span>주의가 필요합니다. 확인해주세요.</span>
+    </div>
+    <div class="alert alert-danger">
+      <span class="alert-icon">❌</span>
+      <span>오류가 발생했습니다. 다시 시도해주세요.</span>
+    </div>
+  </div>
+</section>
+
+<!-- Toast -->
+<section class="component-section">
+  <h2>Toast</h2>
+
+  <div class="toast-demo">
+    <div class="toast">✓ 저장되었습니다</div>
+  </div>
+</section>
+
+<!-- Dropdown -->
+<section class="component-section">
+  <h2>Dropdown</h2>
+
+  <div class="dropdown-demo">
+    <button class="btn btn-tertiary btn-md">메뉴 열기 ▾</button>
+    <div class="dropdown">
+      <div class="dropdown-item">프로필</div>
+      <div class="dropdown-item">설정</div>
+      <div class="dropdown-item">도움말</div>
+      <div class="dropdown-item" style="color: var(--danger);">로그아웃</div>
+    </div>
+  </div>
+</section>
+
+<!-- Tooltip -->
+<section class="component-section">
+  <h2>Tooltip</h2>
+
+  <div class="tooltip-demo">
+    <div class="tooltip-trigger">
+      <button class="btn btn-secondary btn-md">호버하세요</button>
+      <div class="tooltip">툴팁 내용입니다</div>
+    </div>
+  </div>
+</section>
+
+<!-- Navigation -->
+<section class="component-section">
+  <h2>Navigation</h2>
+
+  <div class="nav-demo">
+    <header class="nav-header">
+      <div class="nav-logo">Logo</div>
+      <nav class="nav-links">
+        <a href="#" class="nav-link active">홈</a>
+        <a href="#" class="nav-link">수집</a>
+        <a href="#" class="nav-link">서재</a>
+        <a href="#" class="nav-link">사전</a>
+      </nav>
+      <button class="btn btn-primary btn-sm">로그인</button>
+    </header>
+  </div>
+</section>
+
+<script>
+  // Chip toggle
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
