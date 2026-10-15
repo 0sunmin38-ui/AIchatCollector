@@ -10,7 +10,8 @@ import { buildReport } from './lib/render.mjs';
 import { buildLibrary } from './lib/library.mjs';
 import { buildGlossaryPage } from './lib/glossary-page.mjs';
 
-import { setDataDir, confFile } from './lib/paths.mjs';
+import { setDataDir, confFile, dataDir } from './lib/paths.mjs';
+import { pathToFileURL } from 'node:url';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const args = Object.fromEntries(
@@ -26,7 +27,10 @@ const html = buildReport(ROOT, {
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, html, 'utf8');
 const libPath = path.join(path.dirname(outPath), 'library.html');
-const lib = buildLibrary(ROOT, { gallery: args.gallery, server: false });
+// 데이터 폴더가 코드 옆이 아닐 수 있어(iCloud 등) 보존 이미지는 절대 경로로 건다
+const gid = args.gallery || JSON.parse(fs.readFileSync(confFile(ROOT, 'config.json'), 'utf8')).gallery.id;
+const imgBase = pathToFileURL(path.join(dataDir(ROOT), gid, 'archive')).href + '/';
+const lib = buildLibrary(ROOT, { gallery: args.gallery, server: false, imgBase });
 fs.writeFileSync(libPath, lib, 'utf8');
 console.log(`수집 페이지: ${outPath}  (${(html.length / 1024).toFixed(0)}KB)`);
 console.log(`내 서재:     ${libPath}  (${(lib.length / 1024).toFixed(0)}KB)`);

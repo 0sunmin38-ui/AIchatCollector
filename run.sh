@@ -7,7 +7,9 @@ set -euo pipefail
 JOB="${1:-daily}"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NODE="$(command -v node || echo /usr/local/bin/node)"
-LOG="$DIR/data/run.log"
+# 로그는 데이터 폴더(.datadir 이 가리키는 곳)에 남긴다
+DATA="$("$NODE" --input-type=module -e "import { setDataDir } from '$DIR/lib/paths.mjs'; console.log(setDataDir('$DIR', null))" | tail -1)"
+LOG="$DATA/run.log"
 mkdir -p "$(dirname "$LOG")"
 
 {

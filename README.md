@@ -59,6 +59,7 @@ AIchatCollector/
 ├─ classify.mjs       ④ 분류 점검  node classify.mjs
 ├─ mine.mjs           ⑤ 은어 채굴  node mine.mjs
 ├─ archive.mjs        ⑥ 북마크·보존 node archive.mjs
+├─ tidy.mjs           저장소 정리  node tidy.mjs --dry   (제목만 있는 글·규칙에 걸린 글 삭제, 한 줄로 합치기)
 ├─ taxonomy.json      분류 규칙 (glossary 를 참조한다)
 ├─ glossary.json      은어 사전 — 용어·개념·조어패턴·미확인후보·기각어
 ├─ GLOSSARY.md        사전에서 자동 생성되는 문맥 브리핑 (사람·모델이 읽는 용)
@@ -69,6 +70,8 @@ AIchatCollector/
 │  ├─ http.mjs        요청 계층 (헤더 고정·레이트리밋·재시도·차단 감지)
 │  ├─ parse.mjs       HTML/JSON → 균일 레코드 (PARSER_VERSION 관리)
 │  ├─ store.mjs       ② 저장 계층 (append-only JSONL + 병합 리더)
+│  ├─ coverage.mjs    수집 범위 장부 (글번호 몇~몇 번을 빠짐없이 처리했는지)
+│  ├─ filter.mjs      수집 규칙 (받지 않을 말머리·키워드 조건)
 │  ├─ glossary.mjs    은어 사전 로더 (개념 확장·은어 탐지)
 │  ├─ miner.mjs       채굴 로직 (CLI·서버 공용)
 │  ├─ archive.mjs     원문 통째 보존 (본문·댓글·이미지)
@@ -79,14 +82,16 @@ AIchatCollector/
 │  ├─ labels.mjs      수동 라벨 저장소 (자동 분류를 항상 덮어씀)
 │  └─ render.mjs      리포트 HTML 생성 (report/serve 공용)
 └─ data/<갤러리ID>/
-   ├─ posts/YYYY-MM.jsonl   글 레코드 (수집할 때마다 한 줄씩 append)
-   ├─ runs/<runId>.json     실행 매니페스트 (파라미터·집계·에러)
+   ├─ posts/YYYY-MM.jsonl   글 레코드 (수집할 때마다 한 줄씩 append). 본문 있는 글만
+   ├─ runs/<runId>.json     실행 매니페스트 (파라미터·집계·에러·목록별로 본 범위)
+   ├─ coverage.json         이어받기 장부 — 목록별로 처리를 끝낸 글번호 구간
+   ├─ backup/posts-<시각>/   tidy.mjs 가 저장소를 다시 쓰기 직전의 원본
    ├─ labels.json           내가 손으로 고친 분류 (자동 분류보다 우선)
    ├─ bookmarks.json        내가 담은 글 (메모·태그)
    ├─ archive/<글번호>/      원문 보존본 — post.json · raw.html · img/
    │                        디시에서 글이 지워져도 여기 남는다
    ├─ state.json            커서 (마지막 글번호·누적 실행 수)
-   └─ run.log               run.sh 실행 로그
+   └─ run.log               run.sh 실행 로그 (데이터 폴더 바로 아래)
 ```
 
 ## 1. 동일하게 페이지를 밟는 기반
@@ -98,7 +103,7 @@ AIchatCollector/
 
 | job | 하는 일 |
 |---|---|
-| `daily` | 전체글 최근 5p + 개념글 3p 목록, 개념글 중 상위 40건 본문·댓글 |
+| `daily` | 전체글을 지난번에 이어서(이어받기) + 개념글 3p, 회당 본문·댓글 150건 |
 | `sweep` | 개념글 15p 깊게, 상위 120건 본문·댓글 |
 | `watch` | 키워드 검색(`프롬프트`/`지침`/`제타`) 기반 수집 |
 
@@ -118,17 +123,54 @@ node crawl.mjs --mode all --pages 10 --min-recommend 20 --detail
 주요 플래그: `--detail`/`--no-detail`, `--max-detail N`, `--min-recommend N`,
 `--refresh`(이미 본문 받은 글 다시 받기), `--with-notice`, `--gallery <id>`(다른 갤러리), `--dry`.
 
-본문을 받을 글은 두 몫으로 나눠 고른다. 절반은 **최신순**으로 새 글을 챙기고, 나머지는 **추천순**으로
-밀린 글을 민다. 후보에는 이번 목록에 뜬 글뿐 아니라 **저장소에 제목만 남아 있는 글**도 들어가서,
-한 번 목록에서 밀려난 글도 다음 실행에 다시 기회를 얻는다.
+**본문을 받은 글만 저장한다.** 목록에서 제목만 본 글은 남기지 않는다. 화면에 보여줄 게 없기 때문이다.
 
-| 플래그 | 기본 | 뜻 |
-|---|---|---|
-| `--fresh-share N` | `0.5` | 본문 상한 중 최신순으로 채울 몫 (`0` 이면 추천순 한 줄, `1` 이면 최신순 한 줄) |
-| `--no-backlog` | (켜짐) | 저장소의 미수집 글은 후보에서 뺀다 — 이번 목록에 뜬 글만 본다 |
+### 이어받기 — 지난번에 본 데서부터
 
-잡별로 고정하려면 `config.json` 의 `jobs.<이름>.detail` 에 `freshShare` / `backlog` 를 적는다.
+target 에 `"incremental": true` 를 주면 그 목록은 `coverage.json` 장부를 보고 이어서 수집한다.
+
+```json
+{ "mode": "all", "incremental": true, "sinceDays": 1, "pages": 30 }
+```
+
+1. 장부에는 "글번호 몇 번부터 몇 번까지 빠짐없이 처리했다" 가 구간으로 남는다. 처리했다는 것은
+   본문까지 받았거나(원래 있었거나), 받으러 갔더니 이미 지워진 글이었다는 뜻이다.
+   글번호는 늘기만 하고 삭제된 글은 번호만 비므로, 글이 지워져도 기준이 흔들리지 않는다.
+2. 다음 수집은 목록을 넘기다 그 구간에 닿으면 멈추고, 그 위의 새 글만 본다.
+   장부가 비어 있으면 `sinceDays`(기본 1)일 전까지만 본다. `pages` 는 상한이다.
+3. 새 글은 **오래된 것부터** 본문을 받는다. 본문 상한에 걸려 멈추면 받은 데까지만 장부에 적고,
+   남은 위쪽은 다음 수집이 이어서 받는다. 받지 못한 글은 저장하지 않는다.
+4. 개념글·검색으로 이미 본문을 받은 글은 다시 받지 않는다. 그 글이 있는 구간도 처리된 것으로 친다.
+
+수집이 끝나면 목록마다 무엇을 어디까지 봤는지 찍힌다. `runs/<runId>.json` 의 `scans` 에도 남는다.
+
+```
+  all            3/30쪽 (지난 구간에 닿음) · 106건 · 391907~392022번 · 2026-10-15T12:47 ~ 18:18 · 처리 5/106
+```
+
+```bash
+node crawl.mjs --mode all --incremental --since-days 2 --pages 60 --detail --max-detail 150
+```
+
+개념글·검색 목록은 이어받기를 쓰지 않는다. 개념글은 나중에 추천이 쌓여 옛 번호가 새로 올라오기 때문이다.
+이어받기에 들지 않은 글을 고르는 기준은 이렇다. 절반은 **최신순**, 나머지는 **추천순**이다(`--fresh-share N`, 기본 `0.5`).
 **데이터 폴더의 `config.json`** 이 코드 옆 파일보다 우선한다(`lib/paths.mjs` 의 `confFile`).
+
+### 받지 않을 글 — `filter`
+
+`config.json` 의 `filter` 가 받지 않을 글을 정한다. 수집기는 목록 단계에서 걸러 본문을 받지 않고,
+이어받기 장부에는 처리한 것으로 적는다. `node tidy.mjs` 는 같은 규칙으로 이미 저장된 글을 지운다. 서재 글은 남긴다.
+
+| 항목 | 지금 값 | 뜻 |
+|---|---|---|
+| `dropHeads` | `["홍보"]` | 이 말머리는 받지 않는다 |
+| `keywordHeads` | `["잡담"]` | 이 말머리는 제목에 키워드가 있을 때만 받는다 |
+| `keywords.types` | model · platform · concept · artifact · action | 사전의 이 분류에 든 은어가 키워드다. 사전에 확정하면 자동으로 늘어난다 |
+| `keywords.terms` | 젬사 · 검열 · 출력량 · 지침 · `re:\d+\s?포` … | 사전 밖 키워드. 부분일치, `re:` 는 정규식 |
+| `bodyKeywordHeads` | `["리뷰"]` | 이 말머리는 본문을 받아 본 뒤, 제목+본문에 `bodyKeywords` 가 있을 때만 남긴다 |
+| `bodyKeywords` | 모델 · 그림 모델 · ooc · 지침 · 출력량 · 검열 … | 리뷰에서 모델 체감이나 OOC 팁이 있는 글만 남기려는 조건 |
+
+정보·제작·리뷰 같은 다른 말머리에는 키워드 조건을 걸지 않는다. "AI 채팅 플랫폼 종합 가이드" 처럼 제목이 평범한 좋은 글이 많아서다.
 
 ### 기간을 정해 수집하기
 
@@ -160,17 +202,32 @@ node crawl.mjs --job daily --since 2026-08-20        # 그날 이후만
   "schema": 1, "parser": 1, "gallery": "aichatting", "no": 374237,
   "url": "...", "title": "...", "headtext": "💬잡담", "type": "icon_recomtxt",
   "is_notice": false,
-  "author": { "nick": "ㅇㅇ", "uid": "verse0724", "ip": "" },
+  "author": { "nick": "ㅇㅇ" },                // uid·IP 는 저장하지 않는다
   "date": "2026-08-26T19:39:23+09:00",      // KST 기준 ISO8601
   "views": 1340, "recommend": 56, "comment_count": 13,
   "from": ["recommend", "search:...:프롬프트"],  // 어떤 경로로 수집됐는지
   "first_seen_at": "...", "crawled_at": "...",
   "detail": { "title", "date", "views", "recommend", "body_html", "body_text", "images": [], "fetched_at" },
-  "comments": [ { "no", "parent", "depth", "nick", "uid", "ip", "date", "text", "is_deleted" } ]
+  "comments": [ { "no", "parent", "depth", "nick", "date", "text", "is_deleted", "is_dccon" } ]
 }
 ```
 
 파서를 고칠 때는 `lib/parse.mjs` 의 `PARSER_VERSION` 을 올린다 — 어떤 파서로 뽑은 레코드인지 나중에 구분된다.
+
+### 지우고 고치기 — `tidy.mjs`
+
+append-only 라서 평소에는 줄이 지워지지 않는다. 지우거나 예전 레코드를 고칠 때는 `tidy.mjs` 로 저장소를 통째로 다시 쓴다.
+
+```bash
+node tidy.mjs --dry   # 무엇이 바뀔지만 본다
+node tidy.mjs         # 정리한다. 원본은 data/<갤러리>/backup/posts-<시각>/ 에 남는다
+```
+
+- 본문도 이미지도 없는 글(제목만 본 글)과 수집 규칙(`filter`)에 걸리는 글을 지운다. 서재에 담긴 글은 남긴다.
+- 같은 글이 여러 줄로 쌓인 것을 글마다 한 줄로 합친다. 대신 조회수·추천수의 변화 이력은 사라진다.
+- 예전 파서가 남긴 말머리(`🎬콘텐🎬콘텐츠`)와 댓글 연도 오류를 고친다.
+
+여러 번 돌려도 같은 결과가 나온다.
 
 ## 3. 볼 수 있는 HTML
 
@@ -219,6 +276,27 @@ node classify.mjs --show ambiguous   # 애매한 것만 몰아보기
 node classify.mjs --explain 373405   # 한 글의 점수 내역과 근거
 node classify.mjs --set 373405 guide # CLI 로 수동 지정 ('-' 로 해제)
 ```
+
+### 태그 — 플랫폼·모델·그림별로 모아 보기
+
+수집 페이지의 **태그** 줄에서 플랫폼·모델·그림 태그를 골라 글을 모아 본다. 같은 묶음 안에서는
+하나라도 맞으면, 묶음끼리는 모두 맞아야 보인다. 예를 들어 `케덕` `로판` `젬3.7` 을 고르면
+케덕이나 로판 글 중 젬3.7 이야기만 남는다. `태그 없음` 은 아무 태그도 안 붙은 글이다.
+
+| 묶음 | 태그 (정식 명칭) | 출처 |
+|---|---|---|
+| 플랫폼 | 케덕 · 로판 · 티팟 · 유니 · 엘린 · 루모 · 우마이 | 사전 `type: platform` |
+| 모델 | 젬4 · 젬이오 · 젬3.8 · 젬3.7 · 젬3.6 · 오푸스 · 소넷 · 페이블 · 클로드 · 아르곤 · GPT · 딥시크 · GLM | 사전 `type: model` |
+| 그림 | NAI · PixAI | 사전 `type: imagegen` |
+
+태그는 제목과 본문 앞 3,000자에서 사전 은어를 찾아 붙인다(`lib/tags.mjs`). 저장하지 않고 화면을 그릴 때마다
+계산하므로, 사전에 별칭을 더하면 저장된 글 전체에 바로 반영된다. 변형 표기는 정식 명칭의 `aliases` 에 넣는다
+(`롶` → 로판, `팊` → 티팟, `젬사` → 젬4, `옾` → 오푸스 …).
+
+- 한 글자 별칭(`케` `팊` `옾` `유`)과 `boundary: true` 인 말(`유니`)은 떨어진 낱말일 때만 찾는다.
+  뒤에 조사나 모델 이름이 붙는 건 괜찮다(`케에서` `케젬사` `롶이오`). 그래서 `유니버스` `케이크` 에는 안 걸린다.
+- `match_self: false` 인 말은 표제어 자체로는 찾지 않는다. `로판` 은 장르 이름(로맨스판타지)이기도 해서
+  `롶` `로판ai` `rofan` 으로 쓰였을 때만 플랫폼으로 본다.
 
 ### 내가 직접 고치기
 

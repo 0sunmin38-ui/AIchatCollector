@@ -6,7 +6,7 @@ import http from 'node:http';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { setDataDir, confFile } from './lib/paths.mjs';
+import { setDataDir, confFile, dataDir } from './lib/paths.mjs';
 import { execFile } from 'node:child_process';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -170,7 +170,7 @@ const server = http.createServer(async (req, res) => {
 
     // 아카이브에 보존한 이미지 서빙 (경로 이탈 차단)
     if (req.method === 'GET' && url.pathname.startsWith('/archive/')) {
-      const base = path.resolve(ROOT, 'data', galleryId, 'archive');
+      const base = path.resolve(dataDir(ROOT), galleryId, 'archive');
       const rel = decodeURIComponent(url.pathname.slice('/archive/'.length));
       const target = path.resolve(base, rel);
       // 보존한 이미지만 내보낸다. post.json·raw.html 은 내부용이라 열지 않는다.

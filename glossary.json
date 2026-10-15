@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": null,
+  "updated_at": "2026-10-15T10:04:02.710Z",
   "_설명": [
     "AI채팅 갤러리 은어 사전. 분류기(taxonomy.json)가 이 파일을 참조하므로, 여기에 단어를 추가하면 분류가 같이 좋아진다.",
     "terms   : 확정된 은어.  type/canon/gloss/aliases/concept 를 갖는다.",
@@ -15,7 +15,8 @@
     "artifact": "공유되는 산출물",
     "role": "롤플레이 등장 주체",
     "action": "행위",
-    "meta": "커뮤니티·메타 표현"
+    "meta": "커뮤니티·메타 표현",
+    "imagegen": "그림 생성 모델"
   },
   "concepts": {
     "statusboard": {
@@ -52,53 +53,6 @@
     }
   },
   "terms": {
-    "케덕": {
-      "type": "platform",
-      "canon": "Caveduck",
-      "gloss": "케이브덕. 캐릭터챗 플랫폼",
-      "aliases": [
-        "케이브덕",
-        "케"
-      ],
-      "confirmed": true,
-      "by": "user"
-    },
-    "롶": {
-      "type": "platform",
-      "canon": "로판AI",
-      "gloss": "캐릭터챗 플랫폼. 상태창을 '트래커'라고 불러요",
-      "aliases": [],
-      "confirmed": true,
-      "by": "user"
-    },
-    "팟": {
-      "type": "platform",
-      "canon": "티팟",
-      "gloss": "캐릭터챗 플랫폼",
-      "aliases": [
-        "팊",
-        "티팟"
-      ],
-      "concept": null,
-      "confirmed": true,
-      "by": "user"
-    },
-    "유니챗": {
-      "type": "platform",
-      "canon": "유니챗",
-      "gloss": "캐릭터챗 플랫폼",
-      "aliases": [],
-      "confirmed": false,
-      "by": "mined"
-    },
-    "루모": {
-      "type": "platform",
-      "canon": "루모",
-      "gloss": "캐릭터챗 플랫폼",
-      "aliases": [],
-      "confirmed": true,
-      "by": "user"
-    },
     "챗픽": {
       "type": "meta",
       "canon": "챗픽",
@@ -108,62 +62,12 @@
       "confirmed": true,
       "by": "user"
     },
-    "엘린": {
-      "type": "platform",
-      "canon": "엘린",
-      "gloss": "캐릭터챗 플랫폼",
-      "aliases": [
-        "엘"
-      ],
-      "confirmed": true,
-      "by": "user"
-    },
     "앵챗": {
       "type": "meta",
       "canon": "AI챗",
       "gloss": "AI 캐릭터챗 자체를 가리키는 말. '앵챗러' = 이용자",
       "aliases": [
         "앵"
-      ],
-      "confirmed": true,
-      "by": "user"
-    },
-    "젬이오": {
-      "type": "model",
-      "canon": "Gemini 2.5 Pro",
-      "gloss": "대화 모델. 젬(Gemini) + 이오(2.5)",
-      "aliases": [
-        "젬2.5"
-      ],
-      "confirmed": true,
-      "by": "user"
-    },
-    "삼칠플": {
-      "type": "model",
-      "canon": "Gemini 3.7 Flash",
-      "gloss": "대화 모델. 삼칠(3.7) + 플(Flash)",
-      "aliases": [
-        "젬삼칠플",
-        "삼칠블"
-      ],
-      "confirmed": true,
-      "by": "user"
-    },
-    "소넷": {
-      "type": "model",
-      "canon": "Claude Sonnet",
-      "gloss": "대화 모델. 뒤에 버전이 붙는다 (소넷3.6, 소넷5)",
-      "aliases": [],
-      "confirmed": true,
-      "by": "user"
-    },
-    "오푸스": {
-      "type": "model",
-      "canon": "Claude Opus",
-      "gloss": "대화 모델. '푸스'로 줄여 쓰고 앞에 버전이 붙는다 (5푸스, 47푸스)",
-      "aliases": [
-        "푸스",
-        "옾"
       ],
       "confirmed": true,
       "by": "user"
@@ -347,36 +251,6 @@
       "confirmed": true,
       "by": "user"
     },
-    "움": {
-      "type": "platform",
-      "canon": "우마이챗",
-      "gloss": "캐릭터챗 플랫폼",
-      "aliases": [
-        "우마이챗",
-        "uummai"
-      ],
-      "concept": null,
-      "confirmed": true,
-      "by": "user"
-    },
-    "롶푸스": {
-      "type": "model",
-      "canon": "로판AI의 Opus",
-      "gloss": "로판AI에서 돌리는 Opus 모델",
-      "aliases": [],
-      "concept": null,
-      "confirmed": true,
-      "by": "user"
-    },
-    "케푸스": {
-      "type": "model",
-      "canon": "케덕의 Opus",
-      "gloss": "케덕에서 돌리는 Opus 모델",
-      "aliases": [],
-      "concept": null,
-      "confirmed": true,
-      "by": "user"
-    },
     "그림체": {
       "type": "concept",
       "concept": "artstyle",
@@ -398,6 +272,313 @@
       ],
       "confirmed": false,
       "by": "mined"
+    },
+    "케덕": {
+      "type": "platform",
+      "canon": "Caveduck",
+      "gloss": "케이브덕. 캐릭터챗 플랫폼",
+      "aliases": [
+        "케이브덕",
+        "케",
+        "caveduck",
+        "caveduck.pro",
+        "caveduck.io",
+        "cvdk",
+        "개덕",
+        "게덕"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "로판": {
+      "type": "platform",
+      "canon": "로판AI",
+      "gloss": "로판 AI. 캐릭터챗 플랫폼. \"로판\" 은 장르 이름이기도 해서 표제어로는 찾지 않는다",
+      "aliases": [
+        "롶",
+        "로판ai",
+        "로판 ai",
+        "rofan",
+        "rofan.ai"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z",
+      "match_self": false
+    },
+    "티팟": {
+      "type": "platform",
+      "canon": "티팟",
+      "gloss": "티팟. 캐릭터챗 플랫폼",
+      "aliases": [
+        "팊",
+        "팟",
+        "티팟챗",
+        "teapot",
+        "teapotchat",
+        "teapotchat.com"
+      ],
+      "concept": null,
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "유니": {
+      "type": "platform",
+      "canon": "유니챗",
+      "gloss": "유니챗. 캐릭터챗 플랫폼. \"유니버스\" 같은 말과 섞이지 않게 낱말 경계에서만 찾는다",
+      "aliases": [
+        "유니챗",
+        "유",
+        "unichat"
+      ],
+      "confirmed": true,
+      "by": "mined",
+      "updated_at": "2026-10-15T10:04:02.710Z",
+      "boundary": true
+    },
+    "엘린": {
+      "type": "platform",
+      "canon": "엘린",
+      "gloss": "엘린. 캐릭터챗 플랫폼",
+      "aliases": [
+        "엘"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "루모": {
+      "type": "platform",
+      "canon": "루모",
+      "gloss": "루모. 캐릭터챗 플랫폼",
+      "aliases": [],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "우마이": {
+      "type": "platform",
+      "canon": "우마이챗",
+      "gloss": "우마이챗. 캐릭터챗 플랫폼",
+      "aliases": [
+        "우마이챗",
+        "uummai",
+        "움",
+        "uumm.ai",
+        "uumm"
+      ],
+      "concept": null,
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "젬4": {
+      "type": "model",
+      "canon": "젬4",
+      "gloss": "Gemini 4",
+      "aliases": [
+        "젬사",
+        "잼4",
+        "잼사",
+        "젬 4",
+        "제미나이4",
+        "제미나이 4",
+        "젬4플"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "젬이오": {
+      "type": "model",
+      "canon": "Gemini 2.5 Pro",
+      "gloss": "젬(Gemini) + 이오(2.5)",
+      "aliases": [
+        "젬2.5",
+        "이오",
+        "잼이오",
+        "젬25"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "젬3.8": {
+      "type": "model",
+      "canon": "젬3.8",
+      "gloss": "Gemini 3.8 계열",
+      "aliases": [
+        "삼팔",
+        "삼팔플",
+        "젬삼팔",
+        "잼삼팔",
+        "젬삼팔플",
+        "3.8플"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "젬3.7": {
+      "type": "model",
+      "canon": "Gemini 3.7 Flash",
+      "gloss": "Gemini 3.7 계열",
+      "aliases": [
+        "젬삼칠플",
+        "삼칠블",
+        "삼칠플",
+        "삼칠",
+        "삼칠이",
+        "젬삼칠",
+        "잼삼칠",
+        "3.7플"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "젬3.6": {
+      "type": "model",
+      "canon": "젬3.6",
+      "gloss": "Gemini 3.6 계열",
+      "aliases": [
+        "삼육플",
+        "젬삼육",
+        "잼삼육",
+        "3.6플"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "오푸스": {
+      "type": "model",
+      "canon": "Claude Opus",
+      "gloss": "Claude Opus. 플랫폼별 별칭(롶푸스·케푸스)도 여기로 모은다",
+      "aliases": [
+        "옾",
+        "롶푸스",
+        "케푸스",
+        "5푸스",
+        "오오푸스",
+        "육푸스",
+        "사육푸스",
+        "opus"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "소넷": {
+      "type": "model",
+      "canon": "Claude Sonnet",
+      "gloss": "Claude Sonnet. 뒤에 버전이 붙는다",
+      "aliases": [
+        "sonnet"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "페이블": {
+      "type": "model",
+      "canon": "페이블",
+      "gloss": "Claude Fable",
+      "aliases": [
+        "fable"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "클로드": {
+      "type": "model",
+      "canon": "클로드",
+      "gloss": "Claude 계열 전반 (모델명을 특정하지 않을 때)",
+      "aliases": [
+        "claude"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "아르곤": {
+      "type": "model",
+      "canon": "아르곤",
+      "gloss": "젬4 계열로 보이는 모델 이름. 정확한 정체는 미확인",
+      "aliases": [
+        "4르곤",
+        "argon"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "GPT": {
+      "type": "model",
+      "canon": "GPT",
+      "gloss": "OpenAI GPT 계열",
+      "aliases": [
+        "짚",
+        "지피티",
+        "gpt",
+        "챗지피티",
+        "chatgpt"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "딥시크": {
+      "type": "model",
+      "canon": "딥시크",
+      "gloss": "딥시크 모델",
+      "aliases": [
+        "deepseek"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "GLM": {
+      "type": "model",
+      "canon": "GLM",
+      "gloss": "GLM 모델",
+      "aliases": [
+        "glm"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "NAI": {
+      "type": "imagegen",
+      "canon": "NAI",
+      "gloss": "NovelAI 이미지 생성",
+      "aliases": [
+        "nai",
+        "노벨ai",
+        "노벨 ai",
+        "novelai"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
+    },
+    "PixAI": {
+      "type": "imagegen",
+      "canon": "PixAI",
+      "gloss": "PixAI 이미지 생성",
+      "aliases": [
+        "pixai",
+        "pixai.art",
+        "픽스"
+      ],
+      "confirmed": true,
+      "by": "user",
+      "updated_at": "2026-10-15T10:04:02.710Z"
     }
   },
   "patterns": [

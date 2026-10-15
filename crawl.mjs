@@ -8,10 +8,13 @@
 //   node dcgall/crawl.mjs --job daily --no-backlog        저장소의 미수집 글은 건너뛴다
 //   node dcgall/crawl.mjs --mode all --pages 40 --since 2026-08-01 --until 2026-08-07 --detail
 //                                                 기간을 정해 그 사이 글만 수집
+//   node dcgall/crawl.mjs --mode all --incremental --since-days 2 --pages 60 --detail
+//                                                 지난번 처리 구간에 이어서 새 글만 (coverage.json)
+// 본문을 받은 글만 저장한다. 목록에서 제목만 본 글은 남기지 않는다.
 // 실제 수집 로직은 lib/crawler.mjs 에 있고 뷰어의 '수집' 버튼과 공유한다.
 import fs from 'node:fs';
 import path from 'node:path';
-import { setDataDir, dataArg, confFile } from './lib/paths.mjs';
+import { setDataDir, dataArg, confFile, dataDir } from './lib/paths.mjs';
 import { fileURLToPath } from 'node:url';
 import { runCrawl } from './lib/crawler.mjs';
 import { Glossary } from './lib/glossary.mjs';
@@ -45,7 +48,8 @@ if (jobName && !cfg.jobs[jobName]) {
 const opts = {
   gallery: args.gallery,
   job: jobName,
-  targets: jobName ? null : [{ mode: args.mode || 'all', pages: Number(args.pages || 3), keyword: args.keyword, searchType: args.searchType }],
+  targets: jobName ? null : [{ mode: args.mode || 'all', pages: Number(args.pages || 3), keyword: args.keyword, searchType: args.searchType,
+                               incremental: !!args.incremental, sinceDays: args['since-days'] ? Number(args['since-days']) : undefined }],
   detail: args['no-detail'] ? false : (args.detail === true || args.detail === 'true' ? true : undefined),
   onlyRecommend: args['only-recommend'] !== undefined ? args['only-recommend'] !== 'false' : undefined,
   maxDetail: args['max-detail'],
@@ -72,6 +76,15 @@ for (const l of r.logs) console.log('  ' + l);
 const m = r.manifest;
 const range = m.range ? ` · 기간 ${m.range.since || '처음'}~${m.range.until || '지금'}` : '';
 const dup = r.skipped ? ` · 중복 건너뜀 ${r.skipped}` : '';
-console.log(`\n▶ run ${m.run_id}${range} · 수집 ${r.records} (신규 ${r.newCount}${dup}) · 본문 ${r.detailDone} · 요청 ${m.http.requests} · 에러 ${r.errors.length}`);
+const drop = r.dropped ? ` · 다음으로 미룸 ${r.dropped}` : '';
+const exc = r.excluded ? ` · 규칙으로 건너뜀 ${r.excluded}` : '';
+console.log(`\n▶ run ${m.run_id}${range} · 목록에서 본 글 ${r.records} (신규 저장 ${r.newCount}${dup}${drop}${exc}) · 본문 ${r.detailDone} · 요청 ${m.http.requests} · 에러 ${r.errors.length}`);
+for (const s of m.scans) {
+  const why = { covered: '지난 구간에 닿음', since: '기간 끝에 닿음', end: '목록 끝', pages: '쪽수 상한' }[s.stop] || s.stop;
+  console.log(`  ${s.tag.padEnd(28)} ${s.pages}/${s.maxPages}쪽 (${why}) · ${s.listed}건`
+    + (s.no ? ` · ${s.no[0]}~${s.no[1]}번` : '')
+    + (s.date ? ` · ${String(s.date[0]).slice(0, 16)} ~ ${String(s.date[1]).slice(0, 16)}` : '')
+    + (s.incremental ? ` · 처리 ${s.handled}/${s.listed}` : ''));
+}
 if (opts.dry) console.log('  [dry-run] 저장하지 않았습니다.');
-else console.log(`  저장: dcgall/data/${m.gallery.id}/  ·  리포트: node dcgall/report.mjs`);
+else console.log(`  저장: ${path.join(dataDir(ROOT), m.gallery.id)}/  ·  리포트: node report.mjs`);
